@@ -1,0 +1,28 @@
+@import "tailwindcss";
+
+:root {
+  --text: #141414;
+  --h1-color: #ffffff;
+}
+
+@layer base {
+  p,
+  h4,
+  h3,
+  button,
+  h1,
+  h2,
+  li,
+  ul,
+  ol {
+    color: var(--text);
+  }
+
+  body {
+    background-color: #f7f7f7;
+  }
+}
+
+@utility no-scrollbar {
+  @apply [scrollbar-width:none] [&::-webkit-scrollbar]:hidden;
+}
