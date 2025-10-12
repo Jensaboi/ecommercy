@@ -8,12 +8,14 @@ export default function Button({
   const variants = {
     primary: "",
     secondary: "",
-    icon: "inline-flex justify-center items-center p-3 rounded-full hover:bg-zinc-700",
+    icon: "hover:cursor-pointer p-2 hover:bg-shadow rounded-md",
   };
 
   return (
     <button
-      className={`hover:cursor-pointer ${variant && variants[variant]} ${className}`}
+      className={`hover:cursor-pointer ${
+        variant && variants[variant]
+      } ${className}`}
       onClick={onClick}
       {...rest}
     >

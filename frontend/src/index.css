@@ -1,11 +1,52 @@
 @import "tailwindcss";
 
-:root {
-  --text: #141414;
-  --h1-color: #ffffff;
+@theme {
+  --color-dark-100: #131518;
+  --color-dark-200: #191b1d;
+  --color-dark-300: #343a40;
+  --color-bg-100: #ffffff;
+  --color-bg-200: #f8f9fa;
+  --color-shadow: rgba(52, 58, 64, 0.356);
+
+  --spacing-xxs: 4px;
+  --spacing-xs: 8px;
+  --spacing-sm: 12px;
+  --spacing-md: 16px;
+  --spacing-lg: 20px;
+  --spacing-xl: 24px;
+  --spacing-2xl: 28px;
+  --spacing-3xl: 32px;
+  --spacing-4xl: 36px;
+  --radius-xs: 4px;
+
+  --font-logo: "BBH Sans Hegarty", sans-serif;
+  --font-logo: "Marck Script", cursive;
 }
 
 @layer base {
+  :root {
+    --color-dark-100: #131518;
+    --color-dark-200: #191b1d;
+    --color-dark-300: #343a40;
+    --color-shadow: rgba(85, 88, 90, 0.141);
+
+    --color-bg-100: #ffffff;
+    --color-bg-200: #f8f9fa;
+
+    --spacing-xxs: 4px;
+    --spacing-xs: 8px;
+    --spacing-sm: 12px;
+    --spacing-md: 16px;
+    --spacing-lg: 20px;
+    --spacing-xl: 24px;
+    --spacing-2xl: 28px;
+    --spacing-3xl: 32px;
+    --spacing-4xl: 36px;
+
+    --font-logo: "Marck Script", cursive;
+    --font-sans: "Inter", sans-serif;
+  }
+
   p,
   h4,
   h3,
@@ -15,14 +56,23 @@
   li,
   ul,
   ol {
-    color: var(--text);
+    color: var(--dark-200);
+    font-family: "Inter", sans-serif;
+    font-optical-sizing: auto;
+    font-style: normal;
   }
 
   body {
-    background-color: #f7f7f7;
+    background-color: var(--bg-200);
   }
 }
 
-@utility no-scrollbar {
-  @apply [scrollbar-width:none] [&::-webkit-scrollbar]:hidden;
+@layer utilities {
+  /* Hide scrollbar */
+  .scrollbar-hidden {
+    &::-webkit-scrollbar {
+      display: none;
+    }
+    scrollbar-width: none; /* Firefox */
+  }
 }

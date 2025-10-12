@@ -1,42 +1,30 @@
 import { Link } from "react-router-dom";
-import { User, Heart, ShoppingCart } from "lucide-react";
+import { User, Heart, Search, ShoppingCart, Menu } from "lucide-react";
 import HeaderListItem from "./HeaderListItem";
 import { useRouteLoaderData } from "react-router-dom";
 import DesktopProductsNav from "./DesktopProductsNav";
 import Searchbar from "./Searchbar";
-import MobileProductsModalNav from "./MobileProductsModalNav";
+import MobileNav from "./MobileNav";
+import Button from "./ui/Button";
+import Logo from "./Logo";
+import Modal from "./ui/Modal";
 
 export default function Header() {
   const { categories } = useRouteLoaderData("root");
 
   return (
-    <header className="bg-zinc-800">
-      <div className="flex items-center justify-between px-6 pt-6 pb-4 gap-10">
-        <Link to={"/"}>
-          <h1 className="tracking-tight leading-tight text-2xl font-bold text-white pb-1 sm:p-0">
-            Ecommercy
-          </h1>
-        </Link>
+    <header className="bg-bg-100 px-4 py-5 flex items-center justify-between shadow-lg shadow-shadow">
+      <Logo />
 
-        <Searchbar className="hidden sm:block max-w-120" />
-        <nav className="">
-          <ul className="text-white flex items-center gap-2">
-            <HeaderListItem to={"/login"} text={"Login"} icon={<User />} />
-            <HeaderListItem
-              to={"/dashboard"}
-              text={"Wishlist"}
-              icon={<Heart />}
-            />
-            <HeaderListItem
-              to={"/checkout"}
-              text={"Checkout"}
-              icon={<ShoppingCart />}
-            />
-          </ul>
-        </nav>
+      <div className="flex items-center gap-2">
+        <Button variant={"icon"}>
+          <Search />
+        </Button>
+        <Button variant={"icon"}>
+          <ShoppingCart />
+        </Button>
+        <MobileNav categories={categories} />
       </div>
-      <MobileProductsModalNav categories={categories} />
-      <DesktopProductsNav categories={categories} />
     </header>
   );
 }
