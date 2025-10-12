@@ -1,11 +1,19 @@
 import { Link } from "react-router-dom";
 import { useState } from "react";
 
-export default function DesktopProductsNav({ categories }) {
+export default function DesktopProductsNav({
+  categories,
+  className = "",
+  ...rest
+}) {
   const [category, setCategory] = useState(null);
 
   return (
-    <div onMouseLeave={() => setCategory(null)} className="w-full relative">
+    <div
+      onMouseLeave={() => setCategory(null)}
+      className={`w-full relative items-center justify-between hidden sm:flex ${className}`}
+      {...rest}
+    >
       <nav>
         <ul className="flex items-center gap-4 px-6 pb-2 no-scrollbar">
           <Link to={"/products"}>
@@ -17,7 +25,7 @@ export default function DesktopProductsNav({ categories }) {
              hover:after:w-full"
               onMouseEnter={() => setCategory(null)}
             >
-              All products
+              All
             </li>
           </Link>
           {Object.keys(categories).map((categoryName, i) => (
