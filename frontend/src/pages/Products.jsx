@@ -31,7 +31,7 @@ export async function loader({ params, request }) {
 
 export default function Products() {
   const { products } = useLoaderData();
-  console.log(products);
+  //console.log(products);
 
   return (
     <div>

@@ -116,3 +116,16 @@ export async function fetchProduct(id) {
 
   return data;
 }
+
+export async function fetchProductsWithSearch(queryString, signal) {
+  const res = await fetch(`/api/products?search=${queryString}`, { signal });
+
+  if (!res.ok)
+    throw new Error(
+      `Error: Failed to fetch products search, satus: ${res.status}`
+    );
+
+  const data = await res.json();
+
+  return data;
+}

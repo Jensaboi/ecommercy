@@ -1,7 +1,7 @@
 import useToggle from "../../hooks/useToggle";
 import { useRef, useEffect } from "react";
 
-export default function Dropdown({ children, ...rest }) {
+export default function Dropdown({ children, className, ...rest }) {
   const ref = useRef(null);
 
   const { isOpen, toggle, close, open } = useToggle(false);
@@ -17,7 +17,11 @@ export default function Dropdown({ children, ...rest }) {
   }, []);
 
   return (
-    <div ref={ref} className="relative" {...rest}>
+    <div
+      ref={ref}
+      className={`${className ? className : ""} relative`}
+      {...rest}
+    >
       {children({ isOpen, toggle, open, close })}
     </div>
   );
