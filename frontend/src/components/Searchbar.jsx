@@ -33,7 +33,7 @@ export default function Searchbar({ className = "", ...rest }) {
             />
           </div>
           {isOpen && query ? (
-            <ul className="bg-white absolute top-full left-0 z-10">
+            <ul className="bg-white absolute top-full left-0 z-10 w-full">
               {result.map(item => (
                 <Link
                   onClick={handleClick}

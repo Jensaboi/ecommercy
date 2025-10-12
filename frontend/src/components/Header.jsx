@@ -35,7 +35,7 @@ export default function Header() {
           </ul>
         </nav>
       </div>
-      <MobileProductsModalNav />
+      <MobileProductsModalNav categories={categories} />
       <DesktopProductsNav categories={categories} />
     </header>
   );
