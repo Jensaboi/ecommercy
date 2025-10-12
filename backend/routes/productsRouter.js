@@ -2,7 +2,7 @@ import express from "express";
 import {
   getProductWithId,
   deleteProduct,
-  getAllProducts,
+  getProducts,
   addProduct,
   updateProduct,
   getProductCategories,
@@ -19,6 +19,6 @@ productsRouter.delete("/:id", adminRequired, deleteProduct);
 
 productsRouter.put("/:id", adminRequired, updateProduct);
 
-productsRouter.get("/", getAllProducts);
+productsRouter.get("/", getProducts);
 
 productsRouter.post("/", adminRequired, addProduct);

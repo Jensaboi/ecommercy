@@ -23,10 +23,10 @@ export async function getProductWithId(req, res) {
   }
 }
 
-export async function getAllProducts(req, res) {
+export async function getProducts(req, res) {
   const db = await getConnection();
 
-  const { category, subCategory } = req.query;
+  const { category, subCategory, search } = req.query;
 
   try {
     let filters = [];
@@ -34,21 +34,30 @@ export async function getAllProducts(req, res) {
     SELECT P.* FROM products P
     INNER JOIN sub_categories SC ON P.sub_category_id = SC.id
     INNER JOIN categories C ON SC.category_id = C.id
-    WHERE 1=1`;
+    WHERE 1=1 `;
 
     if (category) {
-      sqlQuery += ` AND C.name = ?`;
+      sqlQuery += `AND C.name = ?`;
       filters.push(category);
     }
 
     if (subCategory) {
-      sqlQuery += ` AND SC.name = ?`;
+      sqlQuery += `AND SC.name = ?`;
 
       filters.push(subCategory);
     }
 
-    const items = await db.all(sqlQuery, filters);
+    if (search) {
+      sqlQuery += `AND (SC. name LIKE ? OR C.name LIKE ? OR P.name LIKE ?)`;
+      const searchStr = `%${search}%`;
 
+      filters.push(searchStr);
+      filters.push(searchStr);
+      filters.push(searchStr);
+    }
+
+    const items = await db.all(sqlQuery, filters);
+    console.log(items);
     res.status(200).json(items);
   } catch (err) {
     res.status(500).json({ error: "Something went wrong, Please try again." });
