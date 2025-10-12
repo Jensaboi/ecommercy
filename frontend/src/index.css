@@ -19,6 +19,8 @@
   --spacing-4xl: 36px;
   --radius-xs: 4px;
 
+  --breakpoint-xs: 460px;
+
   --font-logo: "BBH Sans Hegarty", sans-serif;
   --font-logo: "Marck Script", cursive;
 }
@@ -42,6 +44,8 @@
     --spacing-2xl: 28px;
     --spacing-3xl: 32px;
     --spacing-4xl: 36px;
+
+    --breakpoint-xs: 460px;
 
     --font-logo: "Marck Script", cursive;
     --font-sans: "Inter", sans-serif;
@@ -74,5 +78,16 @@
       display: none;
     }
     scrollbar-width: none; /* Firefox */
+  }
+}
+
+@layer components {
+  .icon {
+    padding: var(--spacing-xs);
+    border-radius: var(--radius-sm);
+  }
+  .icon:hover {
+    cursor: pointer;
+    background-color: var(--color-shadow);
   }
 }
