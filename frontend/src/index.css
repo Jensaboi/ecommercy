@@ -59,6 +59,7 @@
   h2,
   li,
   ul,
+  a,
   ol {
     color: var(--dark-200);
     font-family: "Inter", sans-serif;
@@ -89,5 +90,38 @@
   .icon:hover {
     cursor: pointer;
     background-color: var(--color-shadow);
+  }
+  .menu-dropdown {
+    position: absolute;
+    z-index: 10;
+    background-color: var(--color-bg-100);
+    width: 300px;
+    padding: var(--spacing-md);
+    padding-top: var(--spacing-xl);
+    border: 1px solid var(--color-dark-200);
+    top: 100%;
+  }
+
+  .nav-text {
+    font-weight: 500;
+  }
+  .nav-text:hover {
+    text-decoration: underline;
+    text-underline-offset: 4px;
+  }
+  .primary-btn {
+    /* "px-8 py-3 text-md font-semibold hover:bg-dark-300 active:bg-dark-100" */
+
+    padding: 1em 1.5em;
+    background-color: var(--color-dark-200);
+    color: var(--color-bg-200);
+    font-weight: 500;
+    font-size: 1rem;
+  }
+  .primary-btn::active {
+    background-color: var(--color-dark-300);
+  }
+  .primary-btn:hover {
+    background-color: var(--color-dark-100);
   }
 }

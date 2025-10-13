@@ -1,11 +1,13 @@
 import { Link } from "react-router-dom";
-import { User, Heart, Search, ShoppingCart } from "lucide-react";
+import { Heart, Search, ShoppingCart } from "lucide-react";
 import { useRouteLoaderData } from "react-router-dom";
 import DesktopProductsNav from "./DesktopProductsNav";
 import Searchbar from "./Searchbar";
 import MobileNav from "./MobileNav";
 import Button from "./ui/Button";
 import Logo from "./Logo";
+import UserMenuDropdown from "./UserMenuDropdown";
+import CartDropdown from "./CartDropdown";
 
 export default function Header() {
   const { categories } = useRouteLoaderData("root");
@@ -20,15 +22,11 @@ export default function Header() {
         <Button variant={"icon"}>
           <Search />
         </Button>
-        <Button className="hidden xs:block" variant={"icon"}>
-          <User />
-        </Button>
-        <Button className="hidden xs:block" variant={"icon"}>
+        <UserMenuDropdown />
+        <Link to={"/wishlist"} className="hidden icon xs:block">
           <Heart />
-        </Button>
-        <Button variant={"icon"}>
-          <ShoppingCart />
-        </Button>
+        </Link>
+        <CartDropdown />
         <MobileNav categories={categories} />
       </div>
     </header>
