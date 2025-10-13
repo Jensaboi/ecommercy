@@ -1,9 +1,11 @@
 import { getConnection } from "../db/getConnection.js";
 
 export async function getAllItems(req, res) {
-  const { userId } = req.session;
-  const db = await getConnection();
+  const { userId, cart } = req.session;
+  const { productId } = req.body;
+
   try {
+    const db = await getConnection();
     const items = await db.all(
       `SELECT C.*, P.price, P.img_url, P.name, P.stock, P.category FROM cart_items C
       LEFT JOIN products P ON P.id = C.product_id
@@ -22,9 +24,7 @@ export async function getAllItems(req, res) {
 }
 
 export async function addItem(req, res) {
-  const db = await getConnection();
-
-  const { userId } = req.session;
+  const { userId, cart } = req.session;
   const { productId } = req.body;
   const quantity = 1;
 
@@ -34,6 +34,30 @@ export async function addItem(req, res) {
       .json({ error: "Bad request, need an product id to add product" });
 
   try {
+    if (!userId) {
+      if (!cart) {
+        const product = { id: productId, quantity };
+
+        req.session.cart = [product];
+
+        return res.status(201).json(product);
+      } else {
+        let product = cart.find(
+          item => parseInt(item.id) === parseInt(productId)
+        );
+
+        if (product) {
+          product.quantity++;
+        } else {
+          product = { id: productId, quantity };
+          cart.push(product);
+        }
+
+        return res.status(201).json(product);
+      }
+    }
+    const db = await getConnection();
+
     const existingItem = await db.get(
       "SELECT * FROM cart_items WHERE user_id = ? AND product_id = ?",
       [userId, productId]

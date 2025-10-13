@@ -1,6 +1,5 @@
 import { Outlet } from "react-router-dom";
-import { fetchUser, fetchCategories } from "./lib/api";
-import { useLoaderData } from "react-router-dom";
+import { fetchCategories } from "./lib/api";
 
 export async function loader() {
   try {
