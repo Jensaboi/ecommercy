@@ -57,7 +57,7 @@ export async function getProducts(req, res) {
     }
 
     const items = await db.all(sqlQuery, filters);
-    console.log(items);
+
     res.status(200).json(items);
   } catch (err) {
     res.status(500).json({ error: "Something went wrong, Please try again." });

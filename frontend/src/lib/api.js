@@ -129,3 +129,36 @@ export async function fetchProductsWithSearch(queryString, signal) {
 
   return data;
 }
+
+export async function addToCart(id) {
+  const res = await fetch("/api/cart", {
+    method: "POST",
+    credentials: "include",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ productId: id }),
+  });
+
+  if (!res.ok)
+    throw new Error(`ERROR: Failed to add item to cart, status: ${res.status}`);
+
+  const data = res.json();
+
+  return data;
+}
+
+export async function fetchAllCartItems(signal) {
+  const res = await fetch("/api/cart", {
+    credentials: "include",
+    method: "GET",
+    signal,
+  });
+
+  if (!res.ok)
+    throw new Error(`ERROR: Failed to fetch cart items, Status: ${res.status}`);
+
+  const data = res.json();
+
+  return data;
+}

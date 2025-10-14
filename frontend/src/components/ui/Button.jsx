@@ -9,7 +9,7 @@ export default function Button({
 }) {
   const variants = {
     primary:
-      "px-8 py-3 bg-dark-200 text-bg-200 text-md font-semibold hover:bg-dark-300 active:bg-dark-100 inline-flex justify-center items-center",
+      "px-8 py-3 bg-dark-200 text-bg-200 text-md font-semibold hover:bg-dark-300 active:bg-dark-100 inline-flex justify-center items-center gap-2 rounded-sm",
     secondary: "",
     icon: "hover:cursor-pointer p-2 hover:bg-shadow rounded-md inline-flex justify-center items-center",
   };

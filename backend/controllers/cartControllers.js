@@ -1,11 +1,47 @@
 import { getConnection } from "../db/getConnection.js";
 
 export async function getAllItems(req, res) {
-  const { userId, cart } = req.session;
-  const { productId } = req.body;
+  const db = await getConnection();
+  const { userId } = req.session;
+  let { cart } = req.session;
 
   try {
-    const db = await getConnection();
+    if (!userId) {
+      if (cart) {
+        let sqlQuery = `SELECT * FROM products`;
+
+        const idsArray = cart.map(item => item.productId);
+
+        idsArray.forEach(item => {
+          let clause = "WHERE";
+
+          if (sqlQuery.includes(clause)) clause = "OR";
+
+          sqlQuery += ` ${clause} id = ?`;
+        });
+
+        let products = await db.all(sqlQuery, idsArray);
+
+        cart.forEach(item => {
+          const match = products.find(
+            product => parseInt(product.id) === parseInt(item.productId)
+          );
+
+          if (!match) {
+            return res
+              .status(500)
+              .json({ error: "Something went wrong, Please try again." });
+          }
+
+          match.quantity = item.quantity;
+        });
+
+        cart = products;
+      }
+
+      return res.status(200).json(cart ?? []);
+    }
+
     const items = await db.all(
       `SELECT C.*, P.price, P.img_url, P.name, P.stock, P.category FROM cart_items C
       LEFT JOIN products P ON P.id = C.product_id
@@ -24,6 +60,7 @@ export async function getAllItems(req, res) {
 }
 
 export async function addItem(req, res) {
+  const db = await getConnection();
   const { userId, cart } = req.session;
   const { productId } = req.body;
   const quantity = 1;
@@ -36,27 +73,26 @@ export async function addItem(req, res) {
   try {
     if (!userId) {
       if (!cart) {
-        const product = { id: productId, quantity };
+        const product = { productId, quantity };
 
         req.session.cart = [product];
 
         return res.status(201).json(product);
       } else {
         let product = cart.find(
-          item => parseInt(item.id) === parseInt(productId)
+          item => parseInt(item.productId) === parseInt(productId)
         );
 
         if (product) {
           product.quantity++;
         } else {
-          product = { id: productId, quantity };
+          product = { productId, quantity };
           cart.push(product);
         }
 
         return res.status(201).json(product);
       }
     }
-    const db = await getConnection();
 
     const existingItem = await db.get(
       "SELECT * FROM cart_items WHERE user_id = ? AND product_id = ?",

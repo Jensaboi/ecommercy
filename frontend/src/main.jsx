@@ -7,11 +7,12 @@ import Home from "./pages/Home.jsx";
 import Products, { loader as productsLoader } from "./pages/Products.jsx";
 import ProductDetails, {
   loader as productDetailsLoader,
+  action as productsDetailsAction,
 } from "./pages/ProductDetails.jsx";
 import Checkout, { loader as checkOutLoader } from "./pages/Checkout.jsx";
 import Login, { action as loginAction } from "./pages/Login.jsx";
 import Register, { action as registerAction } from "./pages/Register.jsx";
-import DefaultLayout from "./layouts/Defaultlayout.jsx";
+import DefaultLayout from "./layouts/DefaultLayout.jsx";
 import Dashboard, { loader as dashBoardLoader } from "./pages/Dashboard.jsx";
 
 const router = createBrowserRouter([
@@ -47,6 +48,7 @@ const router = createBrowserRouter([
             path: "/products/:id",
             element: <ProductDetails />,
             loader: productDetailsLoader,
+            action: productsDetailsAction,
           },
         ],
       },
