@@ -50,14 +50,14 @@ export default function DesktopProductsNav({
       {category && (
         <ul
           onMouseLeave={() => setCategory(null)}
-          className="flex fixed z-5 left-0 top-18 border-b-1 bg-bg-100 items-center w-full mx-auto"
+          className="flex fixed z-5 left-0 top-[82px] px-2 border-b-1 bg-bg-100 items-center w-full mx-auto"
         >
           {categories[category].map((subCategory, i) => (
             <Link
               key={i}
               to={`/products/category/${category}?subCategory=${subCategory}`}
             >
-              <li className=" hover:bg-shadow p-3 px-10">
+              <li className=" hover:bg-shadow py-5 px-10">
                 {subCategory.split("")[0].toUpperCase() + subCategory.slice(1)}
               </li>
             </Link>

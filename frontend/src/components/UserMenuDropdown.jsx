@@ -1,7 +1,6 @@
 import Dropdown from "./ui/Dropdown.jsx";
 import { Link } from "react-router-dom";
 import { User } from "lucide-react";
-import Button from "./ui/Button.jsx";
 
 export default function UserMenuDropdown() {
   return (

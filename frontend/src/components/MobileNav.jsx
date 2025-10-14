@@ -21,7 +21,7 @@ export default function MobileNav({ categories }) {
 
       <nav
         data-open={isOpen}
-        className="fixed p-5 flex flex-col justify-between pb-6 bg-bg-100 shadow-2xl top-0 bottom-0 right-0 data-[open=true]:translate-x-0 data-[open=false]:translate-x-full  transition-transform ease-in-out  w-[70%] h-full"
+        className="fixed p-5 flex flex-col justify-between pb-6 bg-bg-100 shadow-2xl top-0 bottom-0 right-0 data-[open=true]:translate-x-0 data-[open=false]:translate-x-full  transition-transform ease-in-out w-[80%] xs:w-[70%] sm:w-[60%] md:w-[50%] h-full"
       >
         <div className="w-full pt-1 pb-10 flex items-center justify-start gap-xs">
           <Link
@@ -50,7 +50,7 @@ export default function MobileNav({ categories }) {
             />
           ))}
         </ul>
-        <div className="flex flex-col gap-2 self-end">
+        <div className="flex flex-col gap-2 self-end w-full">
           <Link onClick={close} to={"/login"} className="primary-btn">
             Sign in
           </Link>

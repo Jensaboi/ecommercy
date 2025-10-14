@@ -8,6 +8,7 @@ export default function CartDropdown() {
       {({ isOpen, close, open, toggle }) => (
         <div onMouseLeave={close} onMouseEnter={open}>
           <Link
+            to={"/checkout"}
             onMouseEnter={open}
             onMouseLeave={close}
             className="icon hidden xs:block"
