@@ -22,7 +22,7 @@ export async function getAllItems(req, res) {
 
         let products = await db.all(sqlQuery, idsArray);
 
-        cart.forEach(item => {
+        for (const item of cart) {
           const match = products.find(
             product => parseInt(product.id) === parseInt(item.productId)
           );
@@ -34,7 +34,7 @@ export async function getAllItems(req, res) {
           }
 
           match.quantity = item.quantity;
-        });
+        }
 
         cart = products;
       }

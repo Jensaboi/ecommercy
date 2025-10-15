@@ -1,5 +1,6 @@
 import { Outlet } from "react-router-dom";
 import { fetchCategories } from "./lib/api";
+import CartProvider from "./context/CartProvider";
 
 export async function loader() {
   try {
@@ -12,7 +13,9 @@ export async function loader() {
 function App() {
   return (
     <>
-      <Outlet />
+      <CartProvider>
+        <Outlet />
+      </CartProvider>
     </>
   );
 }

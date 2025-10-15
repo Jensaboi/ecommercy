@@ -1,6 +1,6 @@
-import { useActionData, useLoaderData, useNavigation } from "react-router-dom";
-import { addToCart, fetchProduct } from "../lib/api";
-import { Form } from "react-router-dom";
+import { useLoaderData, useParams } from "react-router-dom";
+import { fetchProduct } from "../lib/api";
+import { useCart } from "../context/CartProvider";
 import Button from "../components/ui/Button";
 
 export async function loader({ params }) {
@@ -13,34 +13,19 @@ export async function loader({ params }) {
       attributes: JSON.parse(product.attributes),
       images: JSON.parse(product.images),
     };
+
     return { product };
   } catch (err) {
     console.log(err);
   }
 }
 
-export async function action({ params }) {
-  console.log(params);
-  const { id } = params;
-  try {
-    const result = await addToCart(id);
-
-    return result;
-  } catch (err) {
-    console.log(err);
-    return err;
-  }
-}
-
 export default function ProductDetails() {
+  const { id } = useParams();
   const { product } = useLoaderData();
   const { attributes } = product;
+  const { loading, error, addAndUpdateCart } = useCart();
 
-  const result = useActionData();
-  console.log(result);
-  const navigation = useNavigation();
-  console.log(navigation.state);
-  //console.log(attributes);
   return (
     <div className="flex flex-col md:flex-row gap-8 h-full w-full">
       <div className="w-full h-140 md:h-auto md:flex-1 flex-shrink-0 overflow-hidden">
@@ -62,18 +47,15 @@ export default function ProductDetails() {
           <p className="text-2xl font-semibold text-gray-900">
             {product.price} £
           </p>
-          <Form method="POST">
-            <Button
-              disabled={
-                navigation.state === "submitting" ||
-                navigation.state === "loading"
-              }
-              variant="primary"
-              className="flex-1 max-w-60 disabled:bg-red-500"
-            >
-              Add to cart
-            </Button>
-          </Form>
+          <Button
+            variant={"primary"}
+            className="flex-1 w-full max-w-60"
+            loading={loading}
+            loadingText="Adding..."
+            onClick={() => addAndUpdateCart(id)}
+          >
+            Add to cart
+          </Button>
         </div>
 
         <p className="text-gray-700 leading-relaxed">{product.description}</p>

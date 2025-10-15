@@ -35,12 +35,13 @@ export default function Register() {
             name="name"
             id="name"
             type="text"
+            autoComplete="name"
             placeholder="name..."
           />
         </div>
         <div>
           <label htmlFor="gender">Select Gender:</label>
-          <select name="gender" id="gender">
+          <select autoComplete="sex" name="gender" id="gender">
             <option value="male">Male</option>
             <option value="female">Female</option>
           </select>
@@ -56,6 +57,7 @@ export default function Register() {
             name="email"
             id="email"
             type="email"
+            autoComplete="email"
             placeholder="email@example.com..."
           />
         </div>
@@ -70,6 +72,7 @@ export default function Register() {
             name="password"
             id="password"
             type="password"
+            autoComplete="current-password"
             placeholder="*********"
           />
         </div>

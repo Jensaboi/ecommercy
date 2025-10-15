@@ -130,14 +130,14 @@ export async function fetchProductsWithSearch(queryString, signal) {
   return data;
 }
 
-export async function addToCart(id) {
+export async function addToCart(productId) {
   const res = await fetch("/api/cart", {
     method: "POST",
     credentials: "include",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ productId: id }),
+    body: JSON.stringify({ productId }),
   });
 
   if (!res.ok)
@@ -148,7 +148,7 @@ export async function addToCart(id) {
   return data;
 }
 
-export async function fetchAllCartItems(signal) {
+export async function fetchCart(signal) {
   const res = await fetch("/api/cart", {
     credentials: "include",
     method: "GET",

@@ -2,18 +2,19 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import "./index.css";
+
 import App, { loader as rootLoader } from "./App.jsx";
 import Home from "./pages/Home.jsx";
 import Products, { loader as productsLoader } from "./pages/Products.jsx";
 import ProductDetails, {
   loader as productDetailsLoader,
-  action as productsDetailsAction,
 } from "./pages/ProductDetails.jsx";
 import Checkout, { loader as checkOutLoader } from "./pages/Checkout.jsx";
 import Login, { action as loginAction } from "./pages/Login.jsx";
 import Register, { action as registerAction } from "./pages/Register.jsx";
 import DefaultLayout from "./layouts/DefaultLayout.jsx";
 import Dashboard, { loader as dashBoardLoader } from "./pages/Dashboard.jsx";
+import Wishlist, { loader as wishlistLoader } from "./pages/Wishlist.jsx";
 
 const router = createBrowserRouter([
   {
@@ -21,7 +22,7 @@ const router = createBrowserRouter([
     element: <App />,
     loader: rootLoader,
     hydrateFallbackElement: (
-      <div className="w-full h-full flex flex-col justify-center items-center">
+      <div className="w-full min-h-screen h-full flex flex-col justify-center items-center">
         <h1>Loading app...</h1>
       </div>
     ),
@@ -48,7 +49,11 @@ const router = createBrowserRouter([
             path: "/products/:id",
             element: <ProductDetails />,
             loader: productDetailsLoader,
-            action: productsDetailsAction,
+          },
+          {
+            path: "/whishlist",
+            element: <Wishlist />,
+            loader: wishlistLoader,
           },
         ],
       },

@@ -34,6 +34,7 @@ export default function Login() {
             id="email"
             type="email"
             placeholder="email@example.com..."
+            autoComplete="email"
           />
         </div>
         <div className="flex flex-col">
@@ -46,7 +47,7 @@ export default function Login() {
             name="password"
             id="password"
             type="password"
-            placeholder="*********"
+            autoComplete="current-password"
           />
         </div>
         <button className="bg-zinc-600 self-center px-8 text-white font-medium rounded-md hover:bg-zinc-500 active:bg-zinc-700 hover:cursor-pointer py-2 shadow-lg">
