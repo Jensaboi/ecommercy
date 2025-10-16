@@ -42,7 +42,17 @@ export async function getAllItems(req, res) {
       return res.status(200).json(cart ?? []);
     }
 
-    const items = await db.all(
+    if (cart) {
+      //Get the items in the session cart
+      //Get the items in the DB cart
+      //Compare the two, check product id and quantity
+      // If the same item set quantity to the highest one
+      // else insert session cart items into db
+      // clear the session cart
+      // get cart from db and return items
+    }
+
+    let cartItemsInDb = await db.all(
       `SELECT P.name, P.stock, P.images, P.description, P.price, P.id AS product_id, CI.id AS cart_item_id, CI.quantity FROM products P
       LEFT JOIN cart_items CI ON P.id = CI.product_id
       LEFT JOIN users U ON CI.user_id = U.id
@@ -50,8 +60,8 @@ export async function getAllItems(req, res) {
       `,
       [userId]
     );
-    console.log(items);
-    res.status(200).json(items);
+
+    res.status(200).json(cartItemsInDb);
   } catch (err) {
     console.log(err);
     res.status(500).json({ error: "Something went wrong. Please try again." });
