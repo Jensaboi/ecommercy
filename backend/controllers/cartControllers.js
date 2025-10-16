@@ -1,5 +1,5 @@
 import { getConnection } from "../db/getConnection.js";
-
+import { generateSqlQueryWithIdsArray } from "../lib/utility.js";
 export async function getAllItems(req, res) {
   const db = await getConnection();
   const { userId } = req.session;
@@ -8,17 +8,12 @@ export async function getAllItems(req, res) {
   try {
     if (!userId) {
       if (cart) {
-        let sqlQuery = `SELECT * FROM products`;
+        const productIdsArray = cart.map(item => item.productId);
 
-        const idsArray = cart.map(item => item.productId);
-
-        idsArray.forEach(item => {
-          let clause = "WHERE";
-
-          if (sqlQuery.includes(clause)) clause = "OR";
-
-          sqlQuery += ` ${clause} id = ?`;
-        });
+        const sqlQuery = generateSqlQueryWithIdsArray(
+          productIdsArray,
+          "products"
+        );
 
         let products = await db.all(sqlQuery, idsArray);
 
@@ -42,24 +37,41 @@ export async function getAllItems(req, res) {
       return res.status(200).json(cart ?? []);
     }
 
-    if (cart) {
-      //Get the items in the session cart
-      //Get the items in the DB cart
-      //Compare the two, check product id and quantity
-      // If the same item set quantity to the highest one
-      // else insert session cart items into db
-      // clear the session cart
-      // get cart from db and return items
-    }
-
     let cartItemsInDb = await db.all(
-      `SELECT P.name, P.stock, P.images, P.description, P.price, P.id AS product_id, CI.id AS cart_item_id, CI.quantity FROM products P
+      `SELECT P.name, P.stock, P.images, P.description, P.price, P.id, CI.id AS cart_item_id, CI.quantity FROM products P
       LEFT JOIN cart_items CI ON P.id = CI.product_id
       LEFT JOIN users U ON CI.user_id = U.id
       WHERE CI.user_id = ?
       `,
       [userId]
     );
+
+    if (cart) {
+      for (const cartItem of cart) {
+        const match = cartItemsInDb.find(
+          item => item.id === cartItem.productId
+        );
+
+        if (!match) {
+          await db.run(
+            `INSERT INTO cart_items 
+            ( user_id, product_id, quantity) 
+            VALUES (? , ?, ?)`,
+            [userId, productId, cartItem.quantity]
+          );
+        } else {
+          await db.run(
+            `
+                UPDATE cart_items SET 
+                quantity = quantity + ?
+                WHERE user_id = ? 
+                AND product_id = ?
+                `,
+            [cartItem.quantity, userId, cartItem.productId]
+          );
+        }
+      }
+    }
 
     res.status(200).json(cartItemsInDb);
   } catch (err) {
