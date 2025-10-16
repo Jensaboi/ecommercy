@@ -43,13 +43,14 @@ export async function getAllItems(req, res) {
     }
 
     const items = await db.all(
-      `SELECT C.*, P.price, P.img_url, P.name, P.stock, P.category FROM cart_items C
-      LEFT JOIN products P ON P.id = C.product_id
-      WHERE user_id = ?
+      `SELECT P.name, P.stock, P.images, P.description, P.price, P.id AS product_id, CI.id AS cart_item_id, CI.quantity FROM products P
+      LEFT JOIN cart_items CI ON P.id = CI.product_id
+      LEFT JOIN users U ON CI.user_id = U.id
+      WHERE CI.user_id = ?
       `,
       [userId]
     );
-
+    console.log(items);
     res.status(200).json(items);
   } catch (err) {
     console.log(err);
