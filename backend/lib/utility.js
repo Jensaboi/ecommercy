@@ -4,8 +4,10 @@ export function generateSqlQueryWithIdsArray(idsArr, table) {
   idsArr.forEach(_ => {
     let clause = "WHERE";
 
-    if (sqlQuery.includes(clause)) clause = "OR";
+    if (str.includes(clause)) clause = "OR";
 
-    sqlQuery += ` ${clause} id = ?`;
+    str += ` ${clause} id = ?`;
   });
+
+  return str;
 }

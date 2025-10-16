@@ -1,5 +1,6 @@
 import { getConnection } from "../db/getConnection.js";
 import { generateSqlQueryWithIdsArray } from "../lib/utility.js";
+
 export async function getAllItems(req, res) {
   const db = await getConnection();
   const { userId } = req.session;
@@ -8,37 +9,99 @@ export async function getAllItems(req, res) {
   try {
     if (!userId) {
       if (cart) {
-        const productIdsArray = cart.map(item => item.productId);
+        try {
+          const productIdsArray = cart.map(item => item.productId);
 
-        const sqlQuery = generateSqlQueryWithIdsArray(
-          productIdsArray,
-          "products"
-        );
-
-        let products = await db.all(sqlQuery, idsArray);
-
-        for (const item of cart) {
-          const match = products.find(
-            product => parseInt(product.id) === parseInt(item.productId)
+          const sqlQuery = generateSqlQueryWithIdsArray(
+            productIdsArray,
+            "products"
           );
 
-          if (!match) {
-            return res
-              .status(500)
-              .json({ error: "Something went wrong, Please try again." });
+          let products = await db.all(sqlQuery, productIdsArray);
+
+          for (const item of cart) {
+            const match = products.find(
+              product => parseInt(product.id) === parseInt(item.productId)
+            );
+
+            if (!match) {
+              return res
+                .status(500)
+                .json({ error: "Something went wrong, Please try again." });
+            }
+
+            match.quantity = item.quantity;
           }
 
-          match.quantity = item.quantity;
+          cart = products;
+          return res.status(200).json(cart ?? []);
+        } catch (err) {
+          console.log("Failed to get session cart: " + err.message);
+          return res
+            .status(500)
+            .json({ error: "Something went wrong, Please try again." });
         }
-
-        cart = products;
       }
-
-      return res.status(200).json(cart ?? []);
     }
 
-    let cartItemsInDb = await db.all(
-      `SELECT P.name, P.stock, P.images, P.description, P.price, P.id, CI.id AS cart_item_id, CI.quantity FROM products P
+    if (cart) {
+      const currentCartItemsInDb = await db.all(
+        `SELECT P.name, P.stock, P.images, P.description, P.price, P.id AS product_id , CI.id AS cart_id, CI.quantity FROM products P
+            LEFT JOIN cart_items CI ON P.id = CI.product_id
+            LEFT JOIN users U ON CI.user_id = U.id
+          WHERE CI.user_id = ?
+      `,
+        [userId]
+      );
+      try {
+        await db.run("BEGIN TRANSACTION");
+
+        //loop over session cart
+        for (const cartItem of cart) {
+          try {
+            const match = currentCartItemsInDb.find(
+              item => item.product_id === cartItem.productId
+            );
+            //check for a match.
+            if (!match) {
+              await db.run(
+                `INSERT INTO cart_items
+                ( user_id, product_id, quantity)
+                VALUES (? , ?, ?)`,
+                [userId, cartItem.productId, cartItem.quantity]
+              );
+            } else {
+              await db.run(
+                `
+                UPDATE cart_items SET
+                quantity = ?
+                WHERE user_id = ?
+                AND product_id = ?
+                `,
+                [cartItem.quantity, userId, cartItem.productId]
+              );
+            }
+          } catch (err) {
+            console.error("Error with one cart item: ", err.message);
+            throw err;
+          }
+        }
+
+        await db.run("COMMIT");
+        cart = null;
+      } catch (err) {
+        await db.run("ROLLBACK");
+
+        console.error("Merge failed, rolled back:", err.message);
+
+        return res
+          .status(500)
+          .json({ error: "Something went wrong, Please try again." });
+      }
+    }
+
+    const CartItemsInDb = await db.all(
+      `SELECT P.name, P.stock, P.images, P.description, P.price, P.id AS product_id , CI.id AS cart_id, CI.quantity FROM products P
       LEFT JOIN cart_items CI ON P.id = CI.product_id
       LEFT JOIN users U ON CI.user_id = U.id
       WHERE CI.user_id = ?
@@ -46,34 +109,7 @@ export async function getAllItems(req, res) {
       [userId]
     );
 
-    if (cart) {
-      for (const cartItem of cart) {
-        const match = cartItemsInDb.find(
-          item => item.id === cartItem.productId
-        );
-
-        if (!match) {
-          await db.run(
-            `INSERT INTO cart_items 
-            ( user_id, product_id, quantity) 
-            VALUES (? , ?, ?)`,
-            [userId, productId, cartItem.quantity]
-          );
-        } else {
-          await db.run(
-            `
-                UPDATE cart_items SET 
-                quantity = quantity + ?
-                WHERE user_id = ? 
-                AND product_id = ?
-                `,
-            [cartItem.quantity, userId, cartItem.productId]
-          );
-        }
-      }
-    }
-
-    res.status(200).json(cartItemsInDb);
+    res.status(200).json(CartItemsInDb);
   } catch (err) {
     console.log(err);
     res.status(500).json({ error: "Something went wrong. Please try again." });
