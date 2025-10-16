@@ -35,7 +35,7 @@ export default function UserMenuDropdown() {
                 >
                   No account?{" "}
                   <span className="text-blue-500 hover:underline hover:underline-offset-2">
-                    Sign up!
+                    Register here!
                   </span>
                 </Link>
               </li>

@@ -10,13 +10,13 @@ export async function login({ email, password }) {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ email, password }),
+    credentials: "include",
   });
 
-  if (!res.ok)
-    throw new Error({
-      message: `Error: Failed to login. Status: ${res.status}`,
-      status: res.status,
-    });
+  if (!res.ok) {
+    //Need to handle it here
+    throw new Error(`Error: Failed to login user.`);
+  }
 
   const data = await res.json();
 
@@ -44,11 +44,10 @@ export async function register({ name, gender, email, password }) {
     body: JSON.stringify({ name, gender, email, password }),
   });
 
-  if (!res.ok)
-    throw new Error({
-      message: `Error: Failed to register user. Status: ${res.status}`,
-      status: res.status,
-    });
+  if (!res.ok) {
+    //Need to handle it here
+    throw new Error(`Error: Failed to register user.`);
+  }
 
   const data = await res.json();
 
@@ -62,10 +61,8 @@ export async function fetchUser() {
   });
 
   if (!res.ok) {
-    throw new Error({
-      message: `Error: Failed to get user, Status: ${res.status}`,
-      status: res.status,
-    });
+    //Need to handle it here
+    throw new Error(`Error: Failed to get user.`);
   }
 
   const data = await res.json();
@@ -76,8 +73,10 @@ export async function fetchUser() {
 export async function fetchCategories() {
   const res = await fetch(`/api/products/categories`);
 
-  if (!res.ok)
-    throw new Error(`ERROR: Failed to fetch categories, ${res.status}`);
+  if (!res.ok) {
+    //Need to handle it here
+    throw new Error(`Error: Failed to fetch categories user.`);
+  }
 
   const data = await res.json();
 
@@ -87,8 +86,10 @@ export async function fetchCategories() {
 export async function fetchAllProducts(queryString) {
   const res = await fetch(`/api/products${queryString}`);
 
-  if (!res.ok)
-    throw new Error(`ERROR: Failed to fetch products, ${res.status}`);
+  if (!res.ok) {
+    //Need to handle it here
+    throw new Error(`Error: Failed to get products.`);
+  }
 
   const data = await res.json();
 
@@ -98,8 +99,10 @@ export async function fetchAllProducts(queryString) {
 export async function fetchProductsWithCategory(queryString) {
   const res = await fetch(`/api/products`);
 
-  if (!res.ok)
-    throw new Error(`ERROR: Failed to fetch products, ${res.status}`);
+  if (!res.ok) {
+    //Need to handle it here
+    throw new Error(`Error: Failed to fetch products with category.`);
+  }
 
   const data = await res.json();
 
@@ -109,8 +112,10 @@ export async function fetchProductsWithCategory(queryString) {
 export async function fetchProduct(id) {
   const res = await fetch(`/api/products/${id}`);
 
-  if (!res.ok)
-    throw new Error(`ERROR: Failed to fetch products, ${res.status}`);
+  if (!res.ok) {
+    //Need to handle it here
+    throw new Error(`Error: Failed to fetch product.`);
+  }
 
   const data = await res.json();
 
@@ -120,10 +125,10 @@ export async function fetchProduct(id) {
 export async function fetchProductsWithSearch(queryString, signal) {
   const res = await fetch(`/api/products?search=${queryString}`, { signal });
 
-  if (!res.ok)
-    throw new Error(
-      `Error: Failed to fetch products search, satus: ${res.status}`
-    );
+  if (!res.ok) {
+    //Need to handle it here
+    throw new Error(`Error: Failed to fetch results.`);
+  }
 
   const data = await res.json();
 
@@ -140,8 +145,10 @@ export async function addToCart(productId) {
     body: JSON.stringify({ productId }),
   });
 
-  if (!res.ok)
-    throw new Error(`ERROR: Failed to add item to cart, status: ${res.status}`);
+  if (!res.ok) {
+    //Need to handle it here
+    throw new Error(`Error: Failed to add product to cart.`);
+  }
 
   const data = res.json();
 
@@ -155,8 +162,10 @@ export async function fetchCart(signal) {
     signal,
   });
 
-  if (!res.ok)
-    throw new Error(`ERROR: Failed to fetch cart items, Status: ${res.status}`);
+  if (!res.ok) {
+    //Need to handle it here
+    throw new Error(`Error: Failed to fetch cart items.`);
+  }
 
   const data = res.json();
 

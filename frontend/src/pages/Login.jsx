@@ -1,5 +1,19 @@
-import { Form, Link, redirect } from "react-router-dom";
+import {
+  Form,
+  Link,
+  redirect,
+  useLoaderData,
+  useRouteError,
+  useSearchParams,
+} from "react-router-dom";
 import { login } from "../lib/api.js";
+
+export async function loader({ request }) {
+  const url = new URL(request.url);
+  const { errorMessage } = Object.fromEntries(url.searchParams);
+
+  return { errorMessage };
+}
 
 export async function action({ request, params }) {
   const formData = await request.formData();
@@ -9,20 +23,22 @@ export async function action({ request, params }) {
   try {
     const user = await login({ email, password });
     console.log(user);
-    return redirect("/dashboard");
+    return redirect("/dashboard", { replace: true });
   } catch (err) {
-    console.log(err);
+    throw new Error(err.message);
   }
 }
 
 export default function Login() {
+  const { errorMessage } = useLoaderData();
   return (
     <div className="w-full h-full pt-20">
       <Form
         method="POST"
         className="flex flex-col gap-6 text-white p-6 rounded-md bg-zinc-800 max-w-100 mx-auto"
       >
-        <h1 className="text-2xl text-white font-medium mb-6">Login</h1>
+        <h1 className="text-2xl text-white font-medium mb-3">Login</h1>
+        {errorMessage && <p>{errorMessage}</p>}
         <div className="flex flex-col">
           <label className="text-lg font-normal" htmlFor="email">
             Email

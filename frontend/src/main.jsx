@@ -10,11 +10,16 @@ import ProductDetails, {
   loader as productDetailsLoader,
 } from "./pages/ProductDetails.jsx";
 import Checkout, { loader as checkOutLoader } from "./pages/Checkout.jsx";
-import Login, { action as loginAction } from "./pages/Login.jsx";
+import Login, {
+  loader as loginLoader,
+  action as loginAction,
+} from "./pages/Login.jsx";
 import Register, { action as registerAction } from "./pages/Register.jsx";
 import DefaultLayout from "./layouts/DefaultLayout.jsx";
 import Dashboard, { loader as dashBoardLoader } from "./pages/Dashboard.jsx";
 import Wishlist, { loader as wishlistLoader } from "./pages/Wishlist.jsx";
+import Auth, { loader as authLoader } from "./pages/Auth.jsx";
+import Orders, { loader as ordersLoader } from "./pages/Orders.jsx";
 
 const router = createBrowserRouter([
   {
@@ -37,23 +42,35 @@ const router = createBrowserRouter([
             element: <Products />,
             loader: productsLoader,
           },
-          { path: "/login", element: <Login />, action: loginAction },
+          {
+            path: "/login",
+            element: <Login />,
+            action: loginAction,
+            loader: loginLoader,
+          },
           { path: "/Register", element: <Register />, action: registerAction },
           { path: "/Checkout", element: <Checkout />, loader: checkOutLoader },
-          {
-            path: "/dashboard",
-            element: <Dashboard />,
-            loader: dashBoardLoader,
-          },
           {
             path: "/products/:id",
             element: <ProductDetails />,
             loader: productDetailsLoader,
           },
           {
-            path: "/wishlist",
-            element: <Wishlist />,
-            loader: wishlistLoader,
+            element: <Auth />,
+            loader: authLoader,
+            children: [
+              {
+                path: "/dashboard",
+                element: <Dashboard />,
+                loader: dashBoardLoader,
+              },
+              { path: "/orders", element: <Orders />, loader: ordersLoader },
+              {
+                path: "/wishlist",
+                element: <Wishlist />,
+                loader: wishlistLoader,
+              },
+            ],
           },
         ],
       },

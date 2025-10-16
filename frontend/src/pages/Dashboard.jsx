@@ -1,19 +1,14 @@
-import { redirect, useLoaderData } from "react-router-dom";
-import { fetchUser } from "../lib/api";
+import { useUser } from "../context/UserProvider";
 
 export async function loader() {
   try {
-    const user = await fetchUser();
-
-    return { user };
   } catch (err) {
-    console.log(err);
-    return redirect("/login");
+    console.log(err.error);
   }
 }
+
 export default function Dashboard() {
-  const { user } = useLoaderData();
-  console.log(user);
+  const { user } = useUser();
   return (
     <div>
       <h1>

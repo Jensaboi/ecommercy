@@ -23,7 +23,7 @@ export default function CartDropdown() {
             <div onMouseLeave={close} className="menu-dropdown right-0">
               <ul>
                 {cart.map(item => (
-                  <li id={item.id}>
+                  <li key={item.id}>
                     {item.name} {item.quantity}
                   </li>
                 ))}
