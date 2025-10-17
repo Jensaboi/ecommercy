@@ -15,7 +15,8 @@ export async function login({ email, password }) {
 
   if (!res.ok) {
     //Need to handle it here
-    throw new Error(`Error: Failed to login user.`);
+    const err = await res.json();
+    throw new Error(`${err.message}`);
   }
 
   const data = await res.json();

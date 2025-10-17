@@ -2,9 +2,9 @@ import {
   Form,
   Link,
   redirect,
+  useActionData,
   useLoaderData,
   useRouteError,
-  useSearchParams,
 } from "react-router-dom";
 import { login } from "../lib/api.js";
 
@@ -24,13 +24,15 @@ export async function action({ request, params }) {
     const user = await login({ email, password });
     console.log(user);
     return redirect("/dashboard", { replace: true });
-  } catch (err) {
-    throw new Error(err.message);
+  } catch (error) {
+    return error.message;
   }
 }
 
 export default function Login() {
   const { errorMessage } = useLoaderData();
+  const error = useActionData();
+
   return (
     <div className="w-full h-full pt-20">
       <Form
@@ -38,6 +40,7 @@ export default function Login() {
         className="flex flex-col gap-6 text-white p-6 rounded-md bg-zinc-800 max-w-100 mx-auto"
       >
         <h1 className="text-2xl text-white font-medium mb-3">Login</h1>
+        {error && <p>{error}</p>}
         {errorMessage && <p>{errorMessage}</p>}
         <div className="flex flex-col">
           <label className="text-lg font-normal" htmlFor="email">
@@ -45,7 +48,7 @@ export default function Login() {
           </label>
           <input
             required
-            className="w-full p-2 bg-white rounded-sm text-zinc-800 placeholder:text-zinc-800"
+            className="input-text"
             name="email"
             id="email"
             type="email"
@@ -59,7 +62,7 @@ export default function Login() {
           </label>
           <input
             required
-            className="w-full p-2 bg-white rounded-sm text-zinc-800 placeholder:text-zinc-800"
+            className="input-text"
             name="password"
             id="password"
             type="password"

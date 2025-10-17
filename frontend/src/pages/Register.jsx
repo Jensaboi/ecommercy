@@ -31,7 +31,7 @@ export default function Register() {
           <input
             title="Enter your name here."
             required
-            className="w-full p-2 bg-white rounded-sm text-zinc-800 placeholder:text-zinc-800"
+            className="input-text"
             name="name"
             id="name"
             type="text"
@@ -53,7 +53,7 @@ export default function Register() {
           <input
             title="Enter your email here."
             required
-            className="w-full p-2 bg-white rounded-sm text-zinc-800 placeholder:text-zinc-800"
+            className="input-text"
             name="email"
             id="email"
             type="email"
@@ -68,7 +68,7 @@ export default function Register() {
           <input
             title="Enter your password here."
             required
-            className="w-full p-2 bg-white rounded-sm text-zinc-800 placeholder:text-zinc-800"
+            className="input-text"
             name="password"
             id="password"
             type="password"

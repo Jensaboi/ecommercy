@@ -411,7 +411,7 @@ VALUES
 );
 `);
 
-    console.log("inserted");
+    console.log("All tables seeded successfully.");
   } catch (err) {
     console.log(err);
   } finally {

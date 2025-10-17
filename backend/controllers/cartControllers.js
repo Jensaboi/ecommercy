@@ -1,5 +1,5 @@
 import { getConnection } from "../db/getConnection.js";
-import { generateSqlQueryWithIdsArray } from "../lib/utility.js";
+import { generateSelecAllFromTableWithIds } from "../lib/utility.js";
 
 export async function getAllItems(req, res) {
   const db = await getConnection();
@@ -12,7 +12,7 @@ export async function getAllItems(req, res) {
         try {
           const productIdsArray = cart.map(item => item.productId);
 
-          const sqlQuery = generateSqlQueryWithIdsArray(
+          const sqlQuery = generateSelecAllFromTableWithIds(
             productIdsArray,
             "products"
           );
@@ -45,22 +45,22 @@ export async function getAllItems(req, res) {
     }
 
     if (cart) {
-      const currentCartItemsInDb = await db.all(
-        `SELECT P.name, P.stock, P.images, P.description, P.price, P.id AS product_id , CI.id AS cart_id, CI.quantity FROM products P
+      try {
+        const currentCartItemsInDb = await db.all(
+          `SELECT P.name, P.stock, P.images, P.description, P.price, P.id AS product_id , CI.id AS cart_id, CI.quantity FROM products P
             LEFT JOIN cart_items CI ON P.id = CI.product_id
             LEFT JOIN users U ON CI.user_id = U.id
           WHERE CI.user_id = ?
       `,
-        [userId]
-      );
-      try {
+          [userId]
+        );
         await db.run("BEGIN TRANSACTION");
 
         //loop over session cart
         for (const cartItem of cart) {
           try {
             const match = currentCartItemsInDb.find(
-              item => item.product_id === cartItem.productId
+              item => parseInt(item.product_id) === parseInt(cartItem.productId)
             );
             //check for a match.
             if (!match) {
@@ -88,7 +88,8 @@ export async function getAllItems(req, res) {
         }
 
         await db.run("COMMIT");
-        cart = null;
+
+        req.session.cart = null;
       } catch (err) {
         await db.run("ROLLBACK");
 

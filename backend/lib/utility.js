@@ -1,4 +1,4 @@
-export function generateSqlQueryWithIdsArray(idsArr, table) {
+export function generateSelecAllFromTableWithIds(idsArr, table) {
   let str = `SELECT * FROM ${table}`;
 
   idsArr.forEach(_ => {

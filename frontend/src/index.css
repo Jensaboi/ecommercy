@@ -7,6 +7,7 @@
   --color-bg-100: #ffffff;
   --color-bg-200: #f8f9fa;
   --color-shadow: rgba(52, 58, 64, 0.356);
+  --color-placeholder: rgba(52, 58, 64, 0.6);
 
   --spacing-xxs: 4px;
   --spacing-xs: 8px;
@@ -125,5 +126,9 @@
   }
   .primary-btn:hover {
     background-color: var(--color-dark-100);
+  }
+
+  .input-text {
+    @apply w-full p-2 bg-white rounded-sm text-zinc-800 placeholder:text-placeholder;
   }
 }

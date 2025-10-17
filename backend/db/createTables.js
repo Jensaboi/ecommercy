@@ -71,7 +71,7 @@ async function createTables() {
     FOREIGN KEY (user_id) REFERENCES users(id)
   )`);
 
-    console.log("DB Tables created!");
+    console.log("All DB Tables created successfully.");
   } catch (err) {
     console.log(err);
     console.log("Failed to create DB tables!");
