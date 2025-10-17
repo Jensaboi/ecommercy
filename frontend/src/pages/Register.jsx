@@ -1,4 +1,4 @@
-import { Form, Link, redirect } from "react-router-dom";
+import { Form, Link, redirect, useActionData } from "react-router-dom";
 import { register } from "../lib/api.js";
 
 export async function action({ request, params }) {
@@ -11,12 +11,13 @@ export async function action({ request, params }) {
 
     return redirect("/dashboard");
   } catch (err) {
-    console.log(err);
-    return err;
+    return err.message;
   }
 }
 
 export default function Register() {
+  const error = useActionData();
+
   return (
     <div className="w-full h-full pt-20">
       <Form
@@ -24,6 +25,7 @@ export default function Register() {
         className="flex flex-col gap-6 text-white p-6 rounded-md bg-zinc-800 max-w-100 mx-auto"
       >
         <h1 className="text-2xl text-white font-medium mb-6">Register</h1>
+        {error && <p className="error-text">{error}</p>}
         <div className="flex flex-col">
           <label className="text-lg font-normal" htmlFor="name">
             Name

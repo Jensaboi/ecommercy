@@ -13,7 +13,9 @@ export async function getUser(req, res) {
     res.status(200).json(user);
   } catch (err) {
     console.log(err);
-    res.status(500).json({ error: "Something went wrong, Please try again." });
+    res
+      .status(500)
+      .json({ message: "Something went wrong, Please try again." });
   } finally {
     await db.close();
   }
@@ -32,7 +34,9 @@ export async function getWishlist(req, res) {
     res.status(200).json(list);
   } catch (err) {
     console.log(err);
-    res.status(500).json({ error: "Something went wrong, Please try again." });
+    res
+      .status(500)
+      .json({ message: "Something went wrong, Please try again." });
   } finally {
     await db.close();
   }
@@ -46,7 +50,7 @@ export async function addToWishlist(req, res) {
 
   if (!productId)
     return res.status(400).json({
-      error: "Bad request, you need the product id to add to watchlist.",
+      message: "Bad request, you need the product id to add to watchlist.",
     });
 
   try {
@@ -58,7 +62,7 @@ export async function addToWishlist(req, res) {
     if (existing)
       return res
         .status(400)
-        .json({ error: "Error, Item already in your watchlist." });
+        .json({ message: "Error, Item already in your watchlist." });
 
     await db.run("INSERT INTO watchlist (product_id, user_id) VALUES (? , ?)", [
       productId,
@@ -68,7 +72,9 @@ export async function addToWishlist(req, res) {
     res.status(201).json({ message: "Item added to watchlist." });
   } catch (err) {
     console.log(err);
-    res.status(500).json({ error: "Something went wrong, Please try again." });
+    res
+      .status(500)
+      .json({ message: "Something went wrong, Please try again." });
   } finally {
     await db.close();
   }
@@ -93,7 +99,9 @@ export async function deleteFromWishlistWithId(req, res) {
     res.status(200).json({ message: "Item removed from watchlist." });
   } catch (err) {
     console.log(err);
-    res.status(500).json({ error: "Something went wrong, Please try again." });
+    res
+      .status(500)
+      .json({ message: "Something went wrong, Please try again." });
   } finally {
     await db.close();
   }

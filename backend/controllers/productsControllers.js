@@ -13,11 +13,15 @@ export async function getProductWithId(req, res) {
     const item = await db.get("SELECT * FROM products WHERE id = ?", [id]);
 
     if (!item)
-      return res.status(200).json({ error: "Theres no product with this id." });
+      return res
+        .status(200)
+        .json({ message: "Theres no product with this id." });
 
     return res.status(200).json(item);
   } catch (err) {
-    res.status(500).json({ error: "Something went wrong. Please try again." });
+    res
+      .status(500)
+      .json({ message: "Something went wrong. Please try again." });
   } finally {
     await db.close();
   }
@@ -60,7 +64,9 @@ export async function getProducts(req, res) {
 
     res.status(200).json(items);
   } catch (err) {
-    res.status(500).json({ error: "Something went wrong, Please try again." });
+    res
+      .status(500)
+      .json({ message: "Something went wrong, Please try again." });
   } finally {
     await db.close();
   }
@@ -89,7 +95,9 @@ export async function getProductCategories(req, res) {
 
     res.status(200).json(temp);
   } catch (err) {
-    res.status(500).json({ error: "Something went wrong, Please try again." });
+    res
+      .status(500)
+      .json({ message: "Something went wrong, Please try again." });
   } finally {
     await db.close();
   }

@@ -27,7 +27,7 @@ export async function getAllItems(req, res) {
             if (!match) {
               return res
                 .status(500)
-                .json({ error: "Something went wrong, Please try again." });
+                .json({ message: "Something went wrong, Please try again." });
             }
 
             match.quantity = item.quantity;
@@ -39,7 +39,7 @@ export async function getAllItems(req, res) {
           console.log("Failed to get session cart: " + err.message);
           return res
             .status(500)
-            .json({ error: "Something went wrong, Please try again." });
+            .json({ message: "Something went wrong, Please try again." });
         }
       }
     }
@@ -47,7 +47,7 @@ export async function getAllItems(req, res) {
     if (cart) {
       try {
         const currentCartItemsInDb = await db.all(
-          `SELECT P.name, P.stock, P.images, P.description, P.price, P.id AS product_id , CI.id AS cart_id, CI.quantity FROM products P
+          `SELECT P.name, P.stock, P.images, P.description, P.price, P.id AS product_id , CI.id , CI.quantity FROM products P
             LEFT JOIN cart_items CI ON P.id = CI.product_id
             LEFT JOIN users U ON CI.user_id = U.id
           WHERE CI.user_id = ?
@@ -97,7 +97,7 @@ export async function getAllItems(req, res) {
 
         return res
           .status(500)
-          .json({ error: "Something went wrong, Please try again." });
+          .json({ message: "Something went wrong, Please try again." });
       }
     }
 
@@ -113,7 +113,9 @@ export async function getAllItems(req, res) {
     res.status(200).json(CartItemsInDb);
   } catch (err) {
     console.log(err);
-    res.status(500).json({ error: "Something went wrong. Please try again." });
+    res
+      .status(500)
+      .json({ message: "Something went wrong. Please try again." });
   } finally {
     await db.close();
   }
@@ -128,7 +130,7 @@ export async function addItem(req, res) {
   if (!productId)
     return res
       .status(400)
-      .json({ error: "Bad request, need an product id to add product" });
+      .json({ message: "Bad request, need an product id to add product" });
 
   try {
     if (!userId) {
@@ -164,19 +166,21 @@ export async function addItem(req, res) {
         "UPDATE cart_items SET quantity = quantity + 1 WHERE id = ?",
         [existingItem.id]
       );
+
       return res.status(200).json({ message: "Added one more to cart." });
     } else {
       await db.run(
         `INSERT INTO cart_items (user_id, product_id, quantity) VALUES ( ?, ? ,? )`,
         [userId, productId, quantity]
       );
+
       return res.status(201).json({ message: "Item added to cart." });
     }
   } catch (err) {
     console.log(err);
     return res
       .status(500)
-      .json({ error: "Something went wrong please try again." });
+      .json({ message: "Something went wrong please try again." });
   } finally {
     await db.close();
   }
@@ -193,7 +197,7 @@ export async function deleteAllItems(req, res) {
     console.log(err);
     return res
       .status(500)
-      .json({ error: "Something went wrong please try again." });
+      .json({ message: "Something went wrong please try again." });
   } finally {
     await db.close();
   }
@@ -207,7 +211,7 @@ export async function deleteItem(req, res) {
   if (!productId)
     return res
       .status(400)
-      .json({ error: "Bad request, no product id to delete." });
+      .json({ message: "Bad request, no product id to delete." });
 
   try {
     const existingItem = await db.get(
@@ -216,7 +220,7 @@ export async function deleteItem(req, res) {
     );
 
     if (!existingItem)
-      return res.status(400).json({ error: "No item to delete" });
+      return res.status(400).json({ message: "No item to delete" });
 
     if (existingItem.quantity >= 2) {
       await db.run(
@@ -237,7 +241,7 @@ export async function deleteItem(req, res) {
     console.log(err);
     return res
       .status(500)
-      .json({ error: "Something went wrong please try again." });
+      .json({ message: "Something went wrong please try again." });
   } finally {
     await db.close();
   }

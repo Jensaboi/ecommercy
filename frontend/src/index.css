@@ -131,4 +131,7 @@
   .input-text {
     @apply w-full p-2 bg-white rounded-sm text-zinc-800 placeholder:text-placeholder;
   }
+  .error-text {
+    @apply text-red-300;
+  }
 }

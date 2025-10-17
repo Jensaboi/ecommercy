@@ -12,7 +12,7 @@ export async function loader({ request }) {
   const url = new URL(request.url);
   const { errorMessage } = Object.fromEntries(url.searchParams);
 
-  return { errorMessage };
+  return errorMessage;
 }
 
 export async function action({ request, params }) {
@@ -21,8 +21,8 @@ export async function action({ request, params }) {
   const { email, password } = Object.fromEntries(formData);
 
   try {
-    const user = await login({ email, password });
-    console.log(user);
+    await login({ email, password });
+
     return redirect("/dashboard", { replace: true });
   } catch (error) {
     return error.message;
@@ -30,8 +30,10 @@ export async function action({ request, params }) {
 }
 
 export default function Login() {
-  const { errorMessage } = useLoaderData();
-  const error = useActionData();
+  const loaderError = useLoaderData();
+  const actionError = useActionData();
+
+  const error = actionError ? actionError : loaderError;
 
   return (
     <div className="w-full h-full pt-20">
@@ -40,8 +42,9 @@ export default function Login() {
         className="flex flex-col gap-6 text-white p-6 rounded-md bg-zinc-800 max-w-100 mx-auto"
       >
         <h1 className="text-2xl text-white font-medium mb-3">Login</h1>
-        {error && <p>{error}</p>}
-        {errorMessage && <p>{errorMessage}</p>}
+
+        {error && <p className="error-text">{error}</p>}
+
         <div className="flex flex-col">
           <label className="text-lg font-normal" htmlFor="email">
             Email
