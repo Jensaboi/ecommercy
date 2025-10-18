@@ -2,6 +2,7 @@ import { Outlet, redirect, useLoaderData } from "react-router-dom";
 import { fetchUser } from "../lib/api";
 import { useUser } from "../context/UserProvider";
 import { useEffect } from "react";
+import { useCart } from "../context/CartProvider";
 
 export async function loader() {
   try {
@@ -16,9 +17,11 @@ export async function loader() {
 export default function Auth() {
   const { me } = useLoaderData();
   const { user, handleSetUser } = useUser();
+  const { reFetchCart } = useCart();
 
   useEffect(() => {
     handleSetUser(me);
+    reFetchCart();
   }, [me, handleSetUser]);
 
   if (!user)

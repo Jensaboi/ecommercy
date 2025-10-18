@@ -53,8 +53,22 @@ export default function CartProvider({ children }) {
     }
   }, []);
 
+  const reFetchCart = useCallback(async () => {
+    setLoading(true);
+    try {
+      const updatedCart = await fetchCart();
+      setCart(updatedCart);
+    } catch (err) {
+      setError(err);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
   return (
-    <CartContext.Provider value={{ cart, loading, error, addAndUpdateCart }}>
+    <CartContext.Provider
+      value={{ cart, loading, error, addAndUpdateCart, reFetchCart }}
+    >
       {children}
     </CartContext.Provider>
   );
