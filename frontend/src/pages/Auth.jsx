@@ -11,7 +11,7 @@ export async function loader() {
     return { me };
   } catch (err) {
     console.error(err);
-    throw redirect("/login?errorMessage=You must login to access this page.");
+    throw redirect("/login");
   }
 }
 export default function Auth() {

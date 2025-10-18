@@ -17,11 +17,7 @@ export default function Dropdown({ children, className, ...rest }) {
   }, []);
 
   return (
-    <div
-      ref={ref}
-      className={`${className ? className : ""} relative`}
-      {...rest}
-    >
+    <div ref={ref} className={`${className ?? ""} relative`} {...rest}>
       {children({ isOpen, toggle, open, close })}
     </div>
   );

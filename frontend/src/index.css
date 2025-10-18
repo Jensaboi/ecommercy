@@ -85,13 +85,9 @@
 
 @layer components {
   .icon {
-    padding: var(--spacing-xs);
-    border-radius: var(--radius-sm);
+    @apply hover:cursor-pointer p-2 hover:bg-shadow rounded-full inline-flex justify-center items-center;
   }
-  .icon:hover {
-    cursor: pointer;
-    background-color: var(--color-shadow);
-  }
+
   .menu-dropdown {
     position: absolute;
     z-index: 10;

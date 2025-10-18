@@ -7,11 +7,7 @@ export default function UserMenuDropdown() {
     <Dropdown>
       {({ isOpen, open, toggle, close }) => (
         <div onMouseLeave={close} onMouseEnter={open}>
-          <Link
-            onClick={close}
-            to={"/dashboard"}
-            className="icon hidden xs:block"
-          >
+          <Link onClick={close} to={"/dashboard"} className="icon">
             <User />
           </Link>
           {isOpen && (
