@@ -1,35 +1,27 @@
-import { Outlet, redirect, useLoaderData } from "react-router-dom";
-import { fetchUser } from "../lib/api";
-import { useUser } from "../context/UserProvider";
+import { Outlet, Navigate } from "react-router-dom";
 import { useEffect } from "react";
+import { useUser } from "../context/UserProvider";
 import { useCart } from "../context/CartProvider";
 
-export async function loader() {
-  try {
-    const me = await fetchUser();
-
-    return { me };
-  } catch (err) {
-    console.error(err);
-    throw redirect("/login");
-  }
-}
 export default function Auth() {
-  const { me } = useLoaderData();
-  const { user, handleSetUser } = useUser();
+  const { user, loading, error, handleSetUser } = useUser();
   const { reFetchCart } = useCart();
 
   useEffect(() => {
-    handleSetUser(me);
     reFetchCart();
-  }, [me, handleSetUser]);
+  }, [user, reFetchCart]);
 
-  if (!user)
+  if (loading) {
     return (
       <div>
-        <h1>loading...</h1>
+        <h1>Loading...</h1>
       </div>
     );
+  }
+
+  if (!user) {
+    return <Navigate to="/" replace />;
+  }
 
   return <Outlet />;
 }

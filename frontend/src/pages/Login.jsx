@@ -1,12 +1,13 @@
 import {
   Form,
   Link,
-  redirect,
   useActionData,
   useLoaderData,
-  useRouteError,
+  useNavigate,
 } from "react-router-dom";
 import { login } from "../lib/api.js";
+import { useEffect } from "react";
+import { useUser } from "../context/UserProvider.jsx";
 
 export async function loader({ request }) {
   const url = new URL(request.url);
@@ -21,19 +22,29 @@ export async function action({ request, params }) {
   const { email, password } = Object.fromEntries(formData);
 
   try {
-    await login({ email, password });
+    const user = await login({ email, password });
 
-    return redirect("/dashboard", { replace: true });
-  } catch (error) {
-    return error.message;
+    return { user };
+  } catch (err) {
+    return { error: err.message };
   }
 }
 
 export default function Login() {
   const loaderError = useLoaderData();
-  const actionError = useActionData();
+  const actionData = useActionData();
+  const navigate = useNavigate();
+  const { handleSetUser } = useUser();
 
-  const error = actionError ? actionError : loaderError;
+  const error = actionData?.error ? actionData.error : loaderError;
+
+  // When action returns a user, update context and navigate
+  useEffect(() => {
+    if (actionData?.user) {
+      handleSetUser(actionData.user);
+      navigate("/dashboard");
+    }
+  }, [actionData, handleSetUser, navigate]);
 
   return (
     <div className="w-full h-full pt-20">

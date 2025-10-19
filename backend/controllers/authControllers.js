@@ -45,8 +45,8 @@ export async function register(req, res) {
       }
 
       res.status(201).json({
-        message: "Account registerd.",
-        user: { name, email },
+        name,
+        email,
       });
     });
   } catch (err) {
@@ -90,8 +90,8 @@ export async function login(req, res) {
         return res.status(500).json({ message: "Failed to save session" });
       }
       res.status(200).json({
-        message: "Session saved.",
-        user: { name: user.name, email },
+        name: user.name,
+        email,
       });
     });
   } catch (err) {

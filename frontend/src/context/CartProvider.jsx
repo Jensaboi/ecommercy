@@ -65,9 +65,20 @@ export default function CartProvider({ children }) {
     }
   }, []);
 
+  const handleSetCart = useCallback(value => {
+    setCart(value);
+  }, []);
+
   return (
     <CartContext.Provider
-      value={{ cart, loading, error, addAndUpdateCart, reFetchCart }}
+      value={{
+        cart,
+        loading,
+        error,
+        addAndUpdateCart,
+        reFetchCart,
+        handleSetCart,
+      }}
     >
       {children}
     </CartContext.Provider>

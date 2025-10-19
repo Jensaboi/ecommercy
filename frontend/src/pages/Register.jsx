@@ -1,22 +1,37 @@
-import { Form, Link, redirect, useActionData } from "react-router-dom";
+import { Form, Link, useActionData, useNavigate } from "react-router-dom";
 import { register } from "../lib/api.js";
+import { useEffect } from "react";
+import { useUser } from "../context/UserProvider.jsx";
+import { useCart } from "../context/CartProvider.jsx";
 
 export async function action({ request, params }) {
   const formData = await request.formData();
 
   const { name, gender, email, password } = Object.fromEntries(formData);
-  console.log({ name, gender, email, password });
-  try {
-    const result = await register({ name, gender, email, password });
 
-    return redirect("/dashboard");
+  try {
+    const user = await register({ name, gender, email, password });
+
+    return { user };
   } catch (err) {
-    return err.message;
+    return { error: err.message };
   }
 }
 
 export default function Register() {
-  const error = useActionData();
+  const actionData = useActionData();
+  const navigate = useNavigate();
+  const error = actionData?.error ?? null;
+  const { handleSetUser } = useUser();
+  const { reFetchCart } = useCart();
+
+  useEffect(() => {
+    if (actionData?.user) {
+      handleSetUser(actionData.user);
+      reFetchCart();
+      navigate("/dashboard");
+    }
+  }, [navigate, actionData]);
 
   return (
     <div className="w-full h-full pt-20">

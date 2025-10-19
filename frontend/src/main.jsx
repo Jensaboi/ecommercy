@@ -18,7 +18,7 @@ import Register, { action as registerAction } from "./pages/Register.jsx";
 import DefaultLayout from "./layouts/DefaultLayout.jsx";
 import Dashboard, { loader as dashBoardLoader } from "./pages/Dashboard.jsx";
 import Wishlist, { loader as wishlistLoader } from "./pages/Wishlist.jsx";
-import Auth, { loader as authLoader } from "./pages/Auth.jsx";
+import Auth from "./pages/Auth.jsx";
 import Orders, { loader as ordersLoader } from "./pages/Orders.jsx";
 
 const router = createBrowserRouter([
@@ -57,7 +57,6 @@ const router = createBrowserRouter([
           },
           {
             element: <Auth />,
-            loader: authLoader,
             children: [
               {
                 path: "/dashboard",

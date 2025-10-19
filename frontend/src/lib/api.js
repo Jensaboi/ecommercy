@@ -140,3 +140,19 @@ export async function fetchCart(signal) {
 
   return data;
 }
+
+export async function logout() {
+  const res = await fetch("/api/auth/logout", {
+    method: "POST",
+    credentials: "include",
+    headers: { "Content-Type": "application/json" },
+  });
+
+  const data = await res.json();
+
+  if (!res.ok) {
+    throw new Error(data?.message ?? "Something went wrong, please try again.");
+  }
+
+  return data;
+}
