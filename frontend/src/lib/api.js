@@ -122,13 +122,12 @@ export async function addToCart(productId) {
     throw new Error(`${data.message || "Something went wrong."}`);
   }
 
-  data = {
-    ...data,
-    attributes: JSON.parse(data.attributes),
-    images: JSON.parse(data.images),
-  };
-  console.log("here");
-  console.log(data);
+  data = data.map(item => ({
+    ...item,
+    attributes: JSON.parse(item.attributes),
+    images: JSON.parse(item.images),
+  }));
+
   return data;
 }
 
