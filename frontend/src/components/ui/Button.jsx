@@ -8,8 +8,7 @@ export default function Button({
   ...rest
 }) {
   const variants = {
-    primary:
-      "px-8 py-3 bg-dark-200 text-bg-200 text-md font-semibold hover:bg-dark-300 active:bg-dark-100 inline-flex justify-center items-center gap-2 rounded-sm disabled:bg-gray-600",
+    primary: "primary-btn",
     secondary: "",
     icon: "icon",
   };

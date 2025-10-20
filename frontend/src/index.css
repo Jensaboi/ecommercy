@@ -100,28 +100,10 @@
   }
 
   .nav-text {
-    font-weight: 500;
-  }
-  .nav-text:hover {
-    text-decoration: underline;
-    text-underline-offset: 4px;
+    @apply underline underline-offset-4 font-[500];
   }
   .primary-btn {
-    /* "px-8 py-3 text-md font-semibold hover:bg-dark-300 active:bg-dark-100" */
-    display: inline-flex;
-    justify-content: center;
-    align-items: center;
-    padding: 1em 1.5em;
-    background-color: var(--color-dark-200);
-    color: var(--color-bg-200);
-    font-weight: 500;
-    font-size: 1rem;
-  }
-  .primary-btn::active {
-    background-color: var(--color-dark-300);
-  }
-  .primary-btn:hover {
-    background-color: var(--color-dark-100);
+    @apply px-8 py-4 text-bg-100 rounded-sm inline-flex justify-center items-center font-semibold bg-dark-200 hover:bg-dark-300 active:bg-dark-100 disabled:bg-dark-300;
   }
 
   .input-text {
