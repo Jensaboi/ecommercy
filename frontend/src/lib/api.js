@@ -127,15 +127,16 @@ export async function addToCart(productId) {
     attributes: JSON.parse(data.attributes),
     images: JSON.parse(data.images),
   };
-
+  console.log("here");
+  console.log(data);
   return data;
 }
 
-export async function fetchCart(signal) {
+export async function fetchCart() {
   const res = await fetch("/api/cart", {
     credentials: "include",
     method: "GET",
-    signal,
+    cache: "no-store",
   });
 
   let data = await res.json();

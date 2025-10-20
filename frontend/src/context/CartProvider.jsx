@@ -14,60 +14,50 @@ export default function CartProvider({ children }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  const fetchData = useCallback(async signal => {
-    setLoading(true);
-    try {
-      const data = await fetchCart(signal);
+  const fetchData = useCallback(
+    async async => {
+      setLoading(true);
+      try {
+        const data = await fetchCart();
 
-      setCart(data);
+        setCart(data);
 
-      return data;
-    } catch (err) {
-      if (err.name !== "AbortError") setError(err);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+        return data;
+      } catch (err) {
+        if (err.name !== "AbortError") setError(err);
+      } finally {
+        setLoading(false);
+      }
+    },
+    [setCart, setError, setLoading]
+  );
 
   useEffect(() => {
-    const controller = new AbortController();
-
-    fetchData(controller.signal);
-
-    return () => {
-      controller.abort();
-    };
+    fetchData();
   }, []);
 
-  const addAndUpdateCart = useCallback(async productId => {
-    setLoading(true);
-    try {
-      await addToCart(productId);
+  const addItemToCart = useCallback(
+    async productId => {
+      setLoading(true);
+      try {
+        const updatedCart = await addToCart(productId);
 
-      const updatedCart = await fetchCart();
-      setCart(updatedCart);
-    } catch (err) {
-      setError(err);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+        setCart(updatedCart);
+      } catch (err) {
+        setError(err);
+      } finally {
+        setLoading(false);
+      }
+    },
+    [setCart, setError, setLoading]
+  );
 
-  const reFetchCart = useCallback(async () => {
-    setLoading(true);
-    try {
-      const updatedCart = await fetchCart();
-      setCart(updatedCart);
-    } catch (err) {
-      setError(err);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  const handleSetCart = useCallback(value => {
-    setCart(value);
-  }, []);
+  const handleSetCart = useCallback(
+    value => {
+      setCart(value);
+    },
+    [setCart]
+  );
 
   return (
     <CartContext.Provider
@@ -75,8 +65,8 @@ export default function CartProvider({ children }) {
         cart,
         loading,
         error,
-        addAndUpdateCart,
-        reFetchCart,
+        addItemToCart,
+        reFetchCart: fetchData,
         handleSetCart,
       }}
     >

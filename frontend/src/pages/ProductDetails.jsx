@@ -24,7 +24,7 @@ export default function ProductDetails() {
   const { id } = useParams();
   const { product } = useLoaderData();
   const { attributes } = product;
-  const { loading, error, addAndUpdateCart } = useCart();
+  const { loading, addItemToCart } = useCart();
 
   return (
     <div className="flex flex-col md:flex-row gap-8 h-full w-full">
@@ -52,7 +52,10 @@ export default function ProductDetails() {
             className="flex-1 w-full max-w-60"
             loading={loading}
             loadingText="Adding..."
-            onClick={() => addAndUpdateCart(id)}
+            onClick={() => {
+              console.log("called");
+              addItemToCart(product.id);
+            }}
           >
             Add to cart
           </Button>
