@@ -5,7 +5,7 @@ import {
   useContext,
   useCallback,
 } from "react";
-import { addToCart, fetchCart } from "../lib/api";
+import { addToCart, deleteCartItem, fetchCart } from "../lib/api";
 
 const CartContext = createContext();
 
@@ -36,6 +36,22 @@ export default function CartProvider({ children }) {
     fetchData();
   }, []);
 
+  const deleteItemFromCart = useCallback(
+    async productId => {
+      setLoading(true);
+      try {
+        const updatedCart = await deleteCartItem(productId);
+
+        setCart(updatedCart);
+      } catch (err) {
+        setError(err);
+      } finally {
+        setLoading(false);
+      }
+    },
+    [setCart, setError, setLoading]
+  );
+
   const addItemToCart = useCallback(
     async productId => {
       setLoading(true);
@@ -65,6 +81,7 @@ export default function CartProvider({ children }) {
         cart,
         loading,
         error,
+        deleteItemFromCart,
         addItemToCart,
         reFetchCart: fetchData,
         handleSetCart,
