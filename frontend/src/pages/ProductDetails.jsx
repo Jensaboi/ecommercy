@@ -53,7 +53,6 @@ export default function ProductDetails() {
             loading={loading}
             loadingText="Adding..."
             onClick={() => {
-              console.log("called");
               addItemToCart(product.id);
             }}
           >

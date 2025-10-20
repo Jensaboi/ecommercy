@@ -168,7 +168,9 @@ export async function addItem(req, res) {
 
         match.quantity = cartItem.quantity;
       }
-      req.session.cart = cart;
+
+      if (!req.session.cart) req.session.cart = cart;
+
       return res.status(200).json(productsFromDb);
     } catch (err) {
       console.log("Failed on session cart: " + err.name);

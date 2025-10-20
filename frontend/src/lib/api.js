@@ -153,6 +153,10 @@ export async function fetchCart() {
   return data;
 }
 
+export async function deleteCartItem(id) {
+  const res = await fetch(`/api/cart/${id}`);
+}
+
 export async function logout() {
   const res = await fetch("/api/auth/logout", {
     method: "POST",
