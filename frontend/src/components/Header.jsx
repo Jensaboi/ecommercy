@@ -15,7 +15,6 @@ import SearchDropdown from "./SearchDropdown";
 export default function Header() {
   const { categories } = useRouteLoaderData("root");
   const nav = useToggle();
-  const search = useToggle();
 
   return (
     <header className="bg-bg-100 px-4 py-2 flex flex-col shadow-lg shadow-shadow">
@@ -25,7 +24,7 @@ export default function Header() {
             <MenuIcon isOpen={nav.isOpen} />
           </Button>
 
-          <Logo />
+          <Logo onClick={nav.close} />
         </div>
 
         <MobileNav
