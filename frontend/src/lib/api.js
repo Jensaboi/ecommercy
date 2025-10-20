@@ -116,11 +116,17 @@ export async function addToCart(productId) {
     body: JSON.stringify({ productId }),
   });
 
-  const data = await res.json();
+  let data = await res.json();
 
   if (!res.ok) {
     throw new Error(`${data.message || "Something went wrong."}`);
   }
+
+  data = {
+    ...data,
+    attributes: JSON.parse(data.attributes),
+    images: JSON.parse(data.images),
+  };
 
   return data;
 }
@@ -132,11 +138,17 @@ export async function fetchCart(signal) {
     signal,
   });
 
-  const data = await res.json();
+  let data = await res.json();
 
   if (!res.ok) {
     throw new Error(`${data.message || "Something went wrong."}`);
   }
+
+  data = data.map(item => ({
+    ...item,
+    attributes: JSON.parse(item.attributes),
+    images: JSON.parse(item.images),
+  }));
 
   return data;
 }

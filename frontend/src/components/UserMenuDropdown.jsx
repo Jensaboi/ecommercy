@@ -6,7 +6,7 @@ import Button from "./ui/Button.jsx";
 import { useCart } from "../context/CartProvider.jsx";
 
 export default function UserMenuDropdown() {
-  const { user, handleLogoutUser } = useUser();
+  const { user, handleLogoutUser, loading } = useUser();
   const { handleSetCart } = useCart();
 
   return (
@@ -28,6 +28,8 @@ export default function UserMenuDropdown() {
                       handleLogoutUser();
                       handleSetCart([]);
                     }}
+                    loading={loading}
+                    loadingText="Loading..."
                     variant="primary"
                     className="w-full"
                   >

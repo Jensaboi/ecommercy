@@ -102,7 +102,7 @@ export async function getAllItems(req, res) {
     }
 
     const CartItemsInDb = await db.all(
-      `SELECT P.name, P.stock, P.images, P.description, P.price, P.id AS product_id , CI.id AS cart_id, CI.quantity FROM products P
+      `SELECT P.name, P.stock, P.images, P.description, P.attributes, P.price, P.id AS product_id , CI.id , CI.quantity FROM products P
       LEFT JOIN cart_items CI ON P.id = CI.product_id
       LEFT JOIN users U ON CI.user_id = U.id
       WHERE CI.user_id = ?

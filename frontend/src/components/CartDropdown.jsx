@@ -2,10 +2,11 @@ import { Link } from "react-router-dom";
 import Dropdown from "./ui/Dropdown";
 import { ShoppingCart } from "lucide-react";
 import { useCart } from "../context/CartProvider";
+import CartListItem from "./CartListItem";
 
 export default function CartDropdown() {
   const { cart, loading, error } = useCart();
-
+  console.log(cart);
   return (
     <Dropdown>
       {({ isOpen, close, open, toggle }) => (
@@ -30,9 +31,11 @@ export default function CartDropdown() {
             <div onMouseLeave={close} className="menu-dropdown right-0">
               <ul>
                 {cart.map(item => (
-                  <li key={item.id ?? item.product_id}>
-                    {item.name} {item.quantity}
-                  </li>
+                  <CartListItem
+                    key={item?.id || item?.product_id}
+                    name={item.name}
+                    imgPath={item.images[0]}
+                  />
                 ))}
               </ul>
             </div>
