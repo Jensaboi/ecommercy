@@ -6,7 +6,8 @@ import CartListItem from "./CartListItem";
 
 export default function CartDropdown() {
   const { cart, loading, error } = useCart();
-  console.log(cart);
+  const total = cart.reduce((acc, curr) => acc + curr.price, 0);
+
   return (
     <Dropdown>
       {({ isOpen, close, open, toggle }) => (
@@ -20,7 +21,6 @@ export default function CartDropdown() {
             <Link
               to={"/checkout"}
               onMouseEnter={open}
-              onMouseLeave={close}
               className="icon block"
               onClick={close}
             >
@@ -28,16 +28,36 @@ export default function CartDropdown() {
             </Link>
           </div>
           {isOpen && (
-            <div onMouseLeave={close} className="menu-dropdown right-0">
-              <ul>
+            <div onMouseLeave={close} className="menu-dropdown right-0  w-108">
+              <div className="py-4 w-full">
+                <h3 className="text-center text-lg font-semibold">
+                  Items in cart
+                </h3>
+              </div>
+
+              <ul className="h-90 flex flex-col gap-3 overflow-hidden overflow-y-scroll">
                 {cart.map(item => (
                   <CartListItem
                     key={item?.id || item?.product_id}
                     name={item.name}
                     imgPath={item.images[0]}
+                    price={item.price}
+                    brand={item.attributes.brand}
+                    color={item.attributes.color}
+                    quantity={item.quantity}
                   />
                 ))}
               </ul>
+
+              <div className=" flex flex-col gap-4 py-4">
+                <div className="flex w-full justify-between items-center">
+                  <span>Total price: </span>
+                  <span>{total}</span>
+                </div>
+                <Link onClick={close} to={"/checkout"} className="primary-btn">
+                  Go to checkout
+                </Link>
+              </div>
             </div>
           )}
         </div>
