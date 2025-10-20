@@ -199,7 +199,7 @@ export async function addItem(req, res) {
       );
     }
 
-    const CartItemsInDb = await db.all(
+    const cartItemsInDb = await db.all(
       `
       SELECT C.id, C.quantity, C.product_id , P.name, P.attributes, P.images, P.price, P.description, P.stock FROM cart_items C
       LEFT JOIN products P ON C.product_id = P.id
@@ -208,7 +208,7 @@ export async function addItem(req, res) {
       [userId]
     );
 
-    return res.status(201).json(CartItemsInDb);
+    return res.status(201).json(cartItemsInDb);
   } catch (err) {
     console.log(err);
     return res
@@ -221,11 +221,12 @@ export async function addItem(req, res) {
 
 export async function deleteAllItems(req, res) {
   const db = await getConnection();
-  const { userId } = res.session;
+  const { userId } = req.session;
+  req.session.cart = null;
   try {
     await db.exec("DELETE FROM cart_items WHERE user_id = ?", [userId]);
 
-    res.status(200).json({ message: "All items have been removed from cart." });
+    return res.status(200).json([]);
   } catch (err) {
     console.log(err);
     return res
@@ -238,38 +239,82 @@ export async function deleteAllItems(req, res) {
 
 export async function deleteItem(req, res) {
   const db = await getConnection();
-  const { userId } = req.session;
+  const { userId, cart } = req.session;
   const { productId } = req.params;
 
   if (!productId)
-    return res
-      .status(400)
-      .json({ message: "Bad request, no product id to delete." });
+    return res.status(400).json({ message: "Product-id is required." });
 
   try {
+    if (!userId) {
+      try {
+        let cart = req.session.cart ?? [];
+
+        cart = cart.filter(
+          item => parseInt(item?.productId) !== parseInt(productId)
+        );
+
+        const filteredIds = cart.map(item => item.productId);
+
+        const sqlQuery = generateSelecAllFromTableWithIds(
+          filteredIds,
+          "products"
+        );
+
+        let productsFromDb = await db.all(sqlQuery, filteredIds);
+
+        for (const cartItem of cart) {
+          const match = productsFromDb.find(
+            item => parseInt(item.id) === cartItem.productId
+          );
+
+          if (!match) {
+            throw new Error("No match on products in DB and session-cart.");
+          }
+
+          match.quantity = cartItem.quantity;
+        }
+
+        return res.status(200).json(productsFromDb);
+      } catch (err) {
+        console.log("ERROR: " + err.name);
+        return res
+          .status(500)
+          .json({ message: "Something went wrong, Please try again." });
+      }
+    }
+
+    //User is logged in.
     const existingItem = await db.get(
       "SELECT * FROM cart_items WHERE user_id = ? AND product_id = ?",
       [userId, productId]
     );
 
     if (!existingItem)
-      return res.status(400).json({ message: "No item to delete" });
+      return res.status(400).json({ message: "Item not found." });
 
     if (existingItem.quantity >= 2) {
       await db.run(
         "UPDATE cart_items SET quantity = quantity - 1 WHERE id = ?",
         [existingItem.id]
       );
-
-      return res.status(200).json({ message: "Removed one off the items." });
     } else {
-      await db.run(
-        "DELETE FROM cart_items WHERE user_id = ? AND product_id = ?",
-        [userId, productId]
-      );
-
-      return res.status(200).json({ message: "Item deleted from cart." });
+      await db.run("DELETE FROM cart_items WHERE user_id = ? AND id = ?", [
+        userId,
+        existingItem.id,
+      ]);
     }
+
+    const cartItemsInDb = await db.all(
+      `
+      SELECT C.id, C.quantity, C.product_id , P.name, P.attributes, P.images, P.price, P.description, P.stock FROM cart_items C
+      LEFT JOIN products P ON C.product_id = P.id
+      WHERE user_id = ?
+      `,
+      [userId]
+    );
+
+    return res.status(200).json(cartItemsInDb);
   } catch (err) {
     console.log(err);
     return res
