@@ -1,6 +1,7 @@
 import { X } from "lucide-react";
 import Button from "./ui/Button.jsx";
 import { useCart } from "../context/CartProvider.jsx";
+import { useCallback, useState } from "react";
 
 export default function CartListItem({
   productId,
@@ -12,14 +13,27 @@ export default function CartListItem({
   color,
   ...rest
 }) {
-  const { deleteItemFromCart, loading, error } = useCart();
+  const { deleteItemFromCart } = useCart();
+
+  const [loadingId, setLoadingId] = useState(null);
+
+  async function handleDelete(productId) {
+    setLoadingId(productId);
+
+    try {
+      await deleteItemFromCart(productId);
+    } finally {
+      setLoadingId(null);
+    }
+  }
   return (
     <article className="flex items-start relative gap-2" {...rest}>
       <Button
-        onClick={() => deleteItemFromCart(productId)}
+        onClick={() => handleDelete(productId)}
         className="absolute top-0 right-0"
         variant={"icon"}
-        loading={loading}
+        loading={loadingId === productId}
+        loadingText="..."
       >
         <X />
       </Button>

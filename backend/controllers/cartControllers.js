@@ -237,7 +237,7 @@ export async function deleteItem(req, res) {
         const filteredIds = cart.map(item => item.productId);
 
         const sqlQuery = generateSqlQueryForCart(filteredIds);
-        console.log("query", sqlQuery);
+
         let productsFromDb = await db.all(sqlQuery, filteredIds);
 
         for (const cartItem of cart) {
