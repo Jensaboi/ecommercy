@@ -30,9 +30,9 @@ export async function getCart(req, res) {
         }
 
         cart = productsInDb;
-        return res.status(200).json(cart ?? []);
+        return res.status(200).json(cart);
       } else {
-        return res.status(200).json([]);
+        return res.status(200).json(cart);
       }
     }
 
@@ -292,5 +292,81 @@ export async function deleteItem(req, res) {
 }
 
 export async function updateItem(req, res) {
-  return null;
+  const db = await getConnection();
+  try {
+    const { userId } = req.session;
+    const { quantity } = req.body;
+    const { productId } = req.params;
+
+    if (!productId) {
+      return res.status(400).json({ message: "Product ID is required." });
+    }
+
+    if (!userId) {
+      let cart = req.session.cart ?? [];
+
+      const itemToUpdate = cart.find(
+        item => parseInt(item.productId) === parseInt(productId)
+      );
+
+      if (!itemToUpdate) {
+        return res
+          .status(400)
+          .json({ message: "No product in cart with that product ID." });
+      }
+
+      itemToUpdate.quantity = quantity + 1;
+
+      const productIdsArray = cart.map(item => item.productId);
+
+      const sqlQuery = generateSqlQueryForCart(productIdsArray);
+
+      let productsInDb = await db.all(sqlQuery, productIdsArray);
+
+      for (const cartItem of cart) {
+        const match = productsInDb.find(
+          product =>
+            parseInt(product.product_id) === parseInt(cartItem.productId)
+        );
+
+        if (!match) {
+          throw new Error("No products in DB with that product ID.");
+        }
+
+        match.quantity = cartItem.quantity;
+      }
+
+      cart = productsInDb;
+      return res.status(200).json(cart ?? []);
+    }
+
+    //User is logged in.
+    try {
+      await db.run(
+        `
+        UPDATE cart_items
+        SET quantity = ? + 1
+        WHERE user_id = ?
+        AND product_id = ?`,
+        [quantity, userId, productId]
+      );
+    } catch (err) {
+      throw new Error("Failed to update cart-item in DB" + err.message);
+    }
+
+    const cartItemsInDb = await db.all(
+      `SELECT P.name, P.stock, P.images, P.description, P.attributes, P.price, P.id AS product_id , CI.id , CI.quantity FROM cart_items CI
+      LEFT JOIN products P ON P.id = CI.product_id
+      WHERE CI.user_id = ?
+      `,
+      [userId]
+    );
+
+    return res.status(200).json(cartItemsInDb);
+  } catch (err) {
+    console.error("UpdateItem cart route: " + err.message);
+    return res
+      .status(500)
+      .json({ message: "Something went wrong, Please try again." });
+  }
 }

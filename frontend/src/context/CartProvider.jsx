@@ -5,7 +5,12 @@ import {
   useContext,
   useCallback,
 } from "react";
-import { addToCart, deleteCartItem, fetchCart } from "../lib/api";
+import {
+  addToCart,
+  deleteCartItem,
+  fetchCart,
+  updateCartItemQuantity,
+} from "../lib/api";
 
 const CartContext = createContext();
 
@@ -67,12 +72,23 @@ export default function CartProvider({ children }) {
     },
     [setCart, setError, setLoading]
   );
+  const increaseCartItemQuantity = useCallback(
+    async ({ productId, quantity }) => {
+      setLoading(true);
+      try {
+        const updatedCart = await updateCartItemQuantity({
+          productId,
+          quantity,
+        });
 
-  const handleSetCart = useCallback(
-    value => {
-      setCart(value);
+        setCart(updatedCart);
+      } catch (err) {
+        setError(err);
+      } finally {
+        setLoading(false);
+      }
     },
-    [setCart]
+    [setCart, setError, setLoading]
   );
 
   return (
@@ -84,7 +100,7 @@ export default function CartProvider({ children }) {
         deleteItemFromCart,
         addItemToCart,
         reFetchCart: fetchData,
-        handleSetCart,
+        increaseCartItemQuantity,
       }}
     >
       {children}

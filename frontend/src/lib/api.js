@@ -169,6 +169,29 @@ export async function deleteCartItem(productId) {
   return data;
 }
 
+export async function updateCartItemQuantity({ productId, quantity }) {
+  const res = await fetch(`/api/cart/${productId}`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
+    body: JSON.stringify({ quantity }),
+  });
+
+  let data = await res.json();
+
+  if (!res.ok) {
+    throw new Error(data?.message ?? "Something went wrong, please try again.");
+  }
+
+  data = data.map(item => ({
+    ...item,
+    attributes: JSON.parse(item.attributes),
+    images: JSON.parse(item.images),
+  }));
+
+  return data;
+}
+
 export async function logout() {
   const res = await fetch("/api/auth/logout", {
     method: "POST",

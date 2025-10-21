@@ -1,4 +1,4 @@
-import { X } from "lucide-react";
+import { Plus, Trash2 } from "lucide-react";
 import Button from "./ui/Button.jsx";
 import { useCart } from "../context/CartProvider.jsx";
 import { useCallback, useState } from "react";
@@ -13,7 +13,7 @@ export default function CartListItem({
   color,
   ...rest
 }) {
-  const { deleteItemFromCart } = useCart();
+  const { deleteItemFromCart, increaseCartItemQuantity } = useCart();
 
   const [loadingId, setLoadingId] = useState(null);
 
@@ -35,7 +35,7 @@ export default function CartListItem({
         loading={loadingId === productId}
         loadingText="..."
       >
-        <X />
+        <Trash2 />
       </Button>
       <div className="aspect-square max-h-28 h-full max-w-18 bg-red-500 w-full">
         {/* <img
@@ -51,7 +51,15 @@ export default function CartListItem({
         <p>{price}</p>
         <p>Brand: {brand}</p>
         <p>Color: {color}</p>
-        <p>Quantity: {quantity}</p>
+        <div className="w-full flex items-center gap-2">
+          <p>Quantity: {quantity}</p>
+          <Button
+            onClick={() => increaseCartItemQuantity({ productId, quantity })}
+            variant={"icon"}
+          >
+            <Plus size={16} />
+          </Button>
+        </div>
       </div>
     </article>
   );

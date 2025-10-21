@@ -16,4 +16,4 @@ cartRouter.post("/", addItem);
 
 cartRouter.delete("/", deleteCart);
 
-cartRouter.put("/:id", updateItem);
+cartRouter.patch("/:productId", updateItem);
