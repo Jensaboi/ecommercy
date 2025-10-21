@@ -8,6 +8,7 @@ import {
 import { login } from "../lib/api.js";
 import { useEffect } from "react";
 import { useUser } from "../context/UserProvider.jsx";
+import { useCart } from "../context/CartProvider.jsx";
 
 export async function loader({ request }) {
   const url = new URL(request.url);
@@ -35,6 +36,7 @@ export default function Login() {
   const actionData = useActionData();
   const navigate = useNavigate();
   const { handleSetUser } = useUser();
+  const { reFetchCart } = useCart();
 
   const error = actionData?.error ? actionData.error : loaderError;
 
@@ -42,6 +44,7 @@ export default function Login() {
   useEffect(() => {
     if (actionData?.user) {
       handleSetUser(actionData.user);
+      reFetchCart();
       navigate("/dashboard");
     }
   }, [actionData, handleSetUser, navigate]);

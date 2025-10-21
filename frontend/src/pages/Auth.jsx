@@ -1,10 +1,9 @@
 import { Outlet, Navigate } from "react-router-dom";
-import { useEffect } from "react";
+
 import { useUser } from "../context/UserProvider";
-import { useCart } from "../context/CartProvider";
 
 export default function Auth() {
-  const { user, loading, error, handleSetUser } = useUser();
+  const { user, loading, error } = useUser();
 
   if (loading) {
     return (
