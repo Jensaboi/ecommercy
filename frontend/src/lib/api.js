@@ -153,8 +153,20 @@ export async function fetchCart() {
   return data;
 }
 
-export async function deleteCartItem(id) {
-  const res = await fetch(`/api/cart/${id}`);
+export async function deleteCartItem(productId) {
+  const res = await fetch(`/api/cart/${productId}`, {
+    method: "DELETE",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
+  });
+
+  const data = await res.json();
+
+  if (!res.ok) {
+    throw new Error(data?.message ?? "Something went wrong, Please try again.");
+  }
+
+  return data;
 }
 
 export async function logout() {

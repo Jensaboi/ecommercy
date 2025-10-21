@@ -6,14 +6,15 @@ import CartListItem from "./CartListItem";
 
 export default function CartDropdown() {
   const { cart, loading, error } = useCart();
-  const total = cart.reduce((acc, curr) => acc + curr.price, 0);
-
+  const total = cart?.reduce((acc, curr) => acc + curr.price, 0) ?? 0;
+  const itemsInCart = cart?.length || 0;
+  console.log(cart);
   return (
     <Dropdown>
       {({ isOpen, close, open, toggle }) => (
         <div onMouseLeave={close} onMouseEnter={open}>
           <div className="relative">
-            {cart.length > 0 && (
+            {itemsInCart > 0 && (
               <span className="absolute -top-1 right-0 inline-flex justify-center items-center text-bg-100 bg-dark-200 rounded-full font-medium text-[11px] w-4 h-4 ">
                 {cart.length}
               </span>
@@ -45,6 +46,7 @@ export default function CartDropdown() {
                     brand={item.attributes.brand}
                     color={item.attributes.color}
                     quantity={item.quantity}
+                    productId={item.product_id}
                   />
                 ))}
               </ul>

@@ -1,27 +1,26 @@
 import { getConnection } from "../db/getConnection.js";
-import { generateSelecAllFromTableWithIds } from "../lib/utility.js";
+import { generateSqlQueryForCart } from "../lib/utility.js";
 
 export async function getAllItems(req, res) {
   const db = await getConnection();
   const { userId } = req.session;
-  let { cart } = req.session;
+  let cart = req.session.cart ?? [];
+  const isItemsInSessionCart = cart?.[0];
 
   try {
     if (!userId) {
-      if (cart) {
+      if (isItemsInSessionCart) {
         try {
           const productIdsArray = cart.map(item => item.productId);
 
-          const sqlQuery = generateSelecAllFromTableWithIds(
-            productIdsArray,
-            "products"
-          );
+          const sqlQuery = generateSqlQueryForCart(productIdsArray);
 
-          let products = await db.all(sqlQuery, productIdsArray);
+          let productsInDb = await db.all(sqlQuery, productIdsArray);
 
-          for (const item of cart) {
-            const match = products.find(
-              product => parseInt(product.id) === parseInt(item.productId)
+          for (const cartItem of cart) {
+            const match = productsInDb.find(
+              product =>
+                parseInt(product.product_id) === parseInt(cartItem.productId)
             );
 
             if (!match) {
@@ -30,10 +29,10 @@ export async function getAllItems(req, res) {
                 .json({ message: "Something went wrong, Please try again." });
             }
 
-            match.quantity = item.quantity;
+            match.quantity = cartItem.quantity;
           }
 
-          cart = products;
+          cart = productsInDb;
           return res.status(200).json(cart ?? []);
         } catch (err) {
           console.log("Failed to get session cart: " + err.message);
@@ -46,43 +45,23 @@ export async function getAllItems(req, res) {
       }
     }
 
-    if (cart) {
+    //User is logged in and have items in session cart.
+    if (isItemsInSessionCart) {
       try {
-        const currentCartItemsInDb = await db.all(
-          `SELECT P.name, P.stock, P.images, P.description, P.price, P.id AS product_id , CI.id , CI.quantity FROM products P
-            LEFT JOIN cart_items CI ON P.id = CI.product_id
-            LEFT JOIN users U ON CI.user_id = U.id
-          WHERE CI.user_id = ?
-      `,
-          [userId]
-        );
         await db.run("BEGIN TRANSACTION");
 
         //loop over session cart
         for (const cartItem of cart) {
           try {
-            const match = currentCartItemsInDb.find(
-              item => parseInt(item.product_id) === parseInt(cartItem.productId)
-            );
-            //check for a match.
-            if (!match) {
-              await db.run(
-                `INSERT INTO cart_items
-                ( user_id, product_id, quantity)
-                VALUES (? , ?, ?)`,
-                [userId, cartItem.productId, cartItem.quantity]
-              );
-            } else {
-              await db.run(
-                `
-                UPDATE cart_items SET
-                quantity = ?
-                WHERE user_id = ?
-                AND product_id = ?
+            await db.run(
+              `
+                INSERT INTO cart_items (user_id, product_id, quantity)
+                VALUES (?, ?, ?)
+                ON CONFLICT(user_id, product_id)
+                DO UPDATE SET quantity = excluded.quantity;
                 `,
-                [cartItem.quantity, userId, cartItem.productId]
-              );
-            }
+              [userId, cartItem.productId, cartItem.quantity]
+            );
           } catch (err) {
             console.error("Error with one cart item: ", err.message);
             throw err;
@@ -90,8 +69,7 @@ export async function getAllItems(req, res) {
         }
 
         await db.run("COMMIT");
-
-        req.session.cart = null;
+        req.session.cart = [];
       } catch (err) {
         await db.run("ROLLBACK");
 
@@ -103,16 +81,15 @@ export async function getAllItems(req, res) {
       }
     }
 
-    const CartItemsInDb = await db.all(
-      `SELECT P.name, P.stock, P.images, P.description, P.attributes, P.price, P.id AS product_id , CI.id , CI.quantity FROM products P
-      LEFT JOIN cart_items CI ON P.id = CI.product_id
-      LEFT JOIN users U ON CI.user_id = U.id
+    const cartItemsInDb = await db.all(
+      `SELECT P.name, P.stock, P.images, P.description, P.attributes, P.price, P.id AS product_id , CI.id , CI.quantity FROM cart_items CI
+      LEFT JOIN products P ON P.id = CI.product_id
       WHERE CI.user_id = ?
       `,
       [userId]
     );
 
-    res.status(200).json(CartItemsInDb);
+    return res.status(200).json(cartItemsInDb);
   } catch (err) {
     console.log(err);
     res
@@ -128,6 +105,7 @@ export async function addItem(req, res) {
   const { userId } = req.session;
   const { productId } = req.body;
   const quantity = 1;
+  let cart = req.session.cart ?? [];
 
   if (!productId)
     return res
@@ -136,8 +114,6 @@ export async function addItem(req, res) {
 
   if (!userId) {
     try {
-      const cart = req.session?.cart ?? [];
-
       const existingCartItem = cart.find(
         item => parseInt(item.productId) === parseInt(productId)
       );
@@ -150,16 +126,13 @@ export async function addItem(req, res) {
 
       const productsIdsArray = cart.map(item => item.productId);
 
-      const sqlQuery = generateSelecAllFromTableWithIds(
-        productsIdsArray,
-        "products"
-      );
+      const sqlQuery = generateSqlQueryForCart(productsIdsArray);
 
       let productsFromDb = await db.all(sqlQuery, productsIdsArray);
 
       for (const cartItem of cart) {
         const match = productsFromDb.find(
-          item => parseInt(item.id) === cartItem.productId
+          product => parseInt(product.product_id) === cartItem.productId
         );
 
         if (!match) {
@@ -173,7 +146,7 @@ export async function addItem(req, res) {
 
       return res.status(200).json(productsFromDb);
     } catch (err) {
-      console.log("Failed on session cart: " + err.name);
+      console.log("Failed on session cart: " + err);
       return res
         .status(500)
         .json({ message: "Something went wrong, Please try again" });
@@ -222,9 +195,12 @@ export async function addItem(req, res) {
 export async function deleteAllItems(req, res) {
   const db = await getConnection();
   const { userId } = req.session;
-  req.session.cart = null;
+  req.session.cart = [];
+
   try {
-    await db.exec("DELETE FROM cart_items WHERE user_id = ?", [userId]);
+    if (userId) {
+      await db.exec("DELETE FROM cart_items WHERE user_id = ?", [userId]);
+    }
 
     return res.status(200).json([]);
   } catch (err) {
@@ -239,8 +215,9 @@ export async function deleteAllItems(req, res) {
 
 export async function deleteItem(req, res) {
   const db = await getConnection();
-  const { userId, cart } = req.session;
+  const { userId } = req.session;
   const { productId } = req.params;
+  let cart = req.session.cart ?? [];
 
   if (!productId)
     return res.status(400).json({ message: "Product-id is required." });
@@ -248,24 +225,24 @@ export async function deleteItem(req, res) {
   try {
     if (!userId) {
       try {
-        let cart = req.session.cart ?? [];
-
         cart = cart.filter(
           item => parseInt(item?.productId) !== parseInt(productId)
         );
 
+        const isItemsInSessionCart = cart?.[0];
+        if (!isItemsInSessionCart) {
+          return res.status(200).json(cart);
+        }
+
         const filteredIds = cart.map(item => item.productId);
 
-        const sqlQuery = generateSelecAllFromTableWithIds(
-          filteredIds,
-          "products"
-        );
-
+        const sqlQuery = generateSqlQueryForCart(filteredIds);
+        console.log("query", sqlQuery);
         let productsFromDb = await db.all(sqlQuery, filteredIds);
 
         for (const cartItem of cart) {
           const match = productsFromDb.find(
-            item => parseInt(item.id) === cartItem.productId
+            product => parseInt(product.product_id) === cartItem.productId
           );
 
           if (!match) {
@@ -275,6 +252,7 @@ export async function deleteItem(req, res) {
           match.quantity = cartItem.quantity;
         }
 
+        req.session.cart = cart;
         return res.status(200).json(productsFromDb);
       } catch (err) {
         console.log("ERROR: " + err.name);
@@ -291,7 +269,9 @@ export async function deleteItem(req, res) {
     );
 
     if (!existingItem)
-      return res.status(400).json({ message: "Item not found." });
+      return res.status(400).json({
+        message: "Item you want to delete doesnt exist in your cart.",
+      });
 
     if (existingItem.quantity >= 2) {
       await db.run(

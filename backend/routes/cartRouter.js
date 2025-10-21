@@ -7,7 +7,7 @@ import {
 } from "../controllers/cartControllers.js";
 export const cartRouter = express.Router();
 
-cartRouter.delete("/:id", deleteItem);
+cartRouter.delete("/:productId", deleteItem);
 cartRouter.get("/", getAllItems);
 cartRouter.post("/", addItem);
 cartRouter.delete("/", deleteAllItems);

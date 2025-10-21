@@ -5,11 +5,6 @@ import { useCart } from "../context/CartProvider";
 
 export default function Auth() {
   const { user, loading, error, handleSetUser } = useUser();
-  const { reFetchCart } = useCart();
-
-  useEffect(() => {
-    reFetchCart();
-  }, [user, reFetchCart]);
 
   if (loading) {
     return (

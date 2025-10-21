@@ -19,7 +19,7 @@ export default function CartProvider({ children }) {
       setLoading(true);
       try {
         const data = await fetchCart();
-
+        console.log("data", data);
         setCart(data);
 
         return data;
