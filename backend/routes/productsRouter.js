@@ -5,19 +5,19 @@ import {
   getProducts,
   addProduct,
   updateProduct,
-  getProductCategories,
+  getCategories,
 } from "../controllers/productsControllers.js";
 import { adminRequired } from "../middleware/adminRequired.js";
 
 export const productsRouter = express.Router();
 
-productsRouter.get("/categories", getProductCategories);
-
-productsRouter.get("/:id", getProductWithId);
+productsRouter.get("/categories", getCategories);
 
 productsRouter.delete("/:id", adminRequired, deleteProduct);
 
 productsRouter.put("/:id", adminRequired, updateProduct);
+
+productsRouter.get("/:id", getProductWithId);
 
 productsRouter.get("/", getProducts);
 

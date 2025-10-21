@@ -13,6 +13,7 @@ export default function Auth() {
     );
   }
 
+  console.log("user", user);
   if (!user) {
     return <Navigate to="/login" replace />;
   }

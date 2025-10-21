@@ -72,7 +72,7 @@ export async function getProducts(req, res) {
   }
 }
 
-export async function getProductCategories(req, res) {
+export async function getCategories(req, res) {
   const db = await getConnection();
   try {
     let temp = {};

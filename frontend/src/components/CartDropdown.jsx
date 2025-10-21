@@ -8,7 +8,7 @@ export default function CartDropdown() {
   const { cart, loading, error } = useCart();
   const total = cart?.reduce((acc, curr) => acc + curr.price, 0) ?? 0;
   const itemsInCart = cart?.length || 0;
-  console.log(cart);
+
   return (
     <Dropdown>
       {({ isOpen, close, open, toggle }) => (
