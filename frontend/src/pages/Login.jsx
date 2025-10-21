@@ -14,6 +14,9 @@ export async function loader({ request }) {
   const url = new URL(request.url);
   const { errorMessage } = Object.fromEntries(url.searchParams);
 
+  try {
+  } catch (err) {}
+
   return errorMessage;
 }
 

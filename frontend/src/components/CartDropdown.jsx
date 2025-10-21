@@ -22,7 +22,7 @@ export default function CartDropdown() {
             <Link
               to={"/checkout"}
               onMouseEnter={open}
-              className="icon block"
+              className="icon"
               onClick={close}
             >
               <ShoppingCart />

@@ -225,6 +225,7 @@ export async function deleteItem(req, res) {
 
       const isItemsInSessionCart = cart?.[0];
       if (!isItemsInSessionCart) {
+        req.session.cart = [];
         return res.status(200).json(cart);
       }
 
@@ -262,19 +263,12 @@ export async function deleteItem(req, res) {
       });
 
     try {
-      if (existingItem.quantity >= 2) {
-        await db.run(
-          "UPDATE cart_items SET quantity = quantity - 1 WHERE id = ?",
-          [existingItem.id]
-        );
-      } else {
-        await db.run("DELETE FROM cart_items WHERE user_id = ? AND id = ?", [
-          userId,
-          existingItem.id,
-        ]);
-      }
+      await db.run("DELETE FROM cart_items WHERE user_id = ? AND id = ?", [
+        userId,
+        existingItem.id,
+      ]);
     } catch (err) {
-      throw new Error("Failed to update/delete item from DB: " + err.message);
+      throw new Error("Failed to delete item from DB: " + err.message);
     }
 
     const cartItemsInDb = await db.all(
