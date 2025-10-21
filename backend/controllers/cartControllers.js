@@ -2,8 +2,8 @@ import { getConnection } from "../db/getConnection.js";
 import { generateSqlQueryForCart } from "../lib/utility.js";
 
 export async function getCart(req, res) {
+  const db = await getConnection();
   try {
-    const db = await getConnection();
     const { userId } = req.session;
     let cart = req.session.cart ?? [];
     const isItemsInSessionCart = cart?.[0];
@@ -95,8 +95,8 @@ export async function getCart(req, res) {
 }
 
 export async function addItem(req, res) {
+  const db = await getConnection();
   try {
-    const db = await getConnection();
     const { userId } = req.session;
     const { productId } = req.body;
     const quantity = 1;
@@ -188,8 +188,8 @@ export async function addItem(req, res) {
 }
 
 export async function deleteCart(req, res) {
+  const db = await getConnection();
   try {
-    const db = await getConnection();
     const { userId } = req.session;
     req.session.cart = [];
 
@@ -209,8 +209,8 @@ export async function deleteCart(req, res) {
 }
 
 export async function deleteItem(req, res) {
+  const db = await getConnection();
   try {
-    const db = await getConnection();
     const { userId } = req.session;
     const { productId } = req.params;
     let cart = req.session.cart ?? [];
