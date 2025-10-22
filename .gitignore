@@ -3,6 +3,9 @@ backend/node_modules/
 backend/.env
 backend/dist/
 
+#just to be sure, lol
+.env
+
 # Frontend
 frontend/node_modules/
 frontend/build/

@@ -1,3 +1,4 @@
+import "./config.js";
 import express from "express";
 import session from "express-session";
 import cors from "cors";
@@ -7,9 +8,9 @@ import { cartRouter } from "./routes/cartRouter.js";
 import { meRouter } from "./routes/meRouter.js";
 import { authRequired } from "./middleware/authRequired.js";
 import { orderRouter } from "./routes/orderRouter.js";
-import path from "node:path";
+import { checkoutRouter } from "./routes/checkoutRouter.js";
 
-const PORT = 8000;
+const PORT = process.env.PORT;
 const __dirname = import.meta.dirname;
 const app = express();
 
@@ -47,6 +48,8 @@ app.use("/api/cart", cartRouter);
 app.use("/api/auth/me", authRequired, meRouter);
 
 app.use("/api/auth", authRouter);
+
+app.use("/api/checkout", checkoutRouter);
 
 app.listen(PORT, () =>
   console.log(`Server connected: Listening on port ${PORT}`)
