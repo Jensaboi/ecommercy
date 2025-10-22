@@ -147,22 +147,15 @@ export async function addItem(req, res) {
 
     //User is logged in.
     try {
-      const existingItemInDb = await db.get(
-        "SELECT * FROM cart_items WHERE user_id = ? AND product_id = ?",
-        [userId, productId]
+      await db.run(
+        `
+        INSERT INTO cart_items (user_id, product_id, quantity)
+        VALUES (?, ?, ?)
+        ON CONFLICT(user_id, product_id)
+        DO UPDATE SET quantity = cart_items.quantity + excluded.quantity ;
+                `,
+        [userId, productId, quantity]
       );
-
-      if (existingItemInDb) {
-        await db.run(
-          "UPDATE cart_items SET quantity = quantity + 1 WHERE id = ?",
-          [existingItemInDb.id]
-        );
-      } else {
-        await db.run(
-          `INSERT INTO cart_items (user_id, product_id, quantity) VALUES ( ?, ? ,? )`,
-          [userId, productId, quantity]
-        );
-      }
 
       const cartItemsInDb = await db.all(
         `
@@ -295,7 +288,7 @@ export async function updateItem(req, res) {
   const db = await getConnection();
   try {
     const { userId } = req.session;
-    const { quantity } = req.body;
+    const { changeAmount } = req.body;
     const { productId } = req.params;
 
     if (!productId) {
@@ -315,7 +308,24 @@ export async function updateItem(req, res) {
           .json({ message: "No product in cart with that product ID." });
       }
 
-      itemToUpdate.quantity = quantity + 1;
+      itemToUpdate.quantity = itemToUpdate.quantity + changeAmount;
+
+      if (itemToUpdate.quantity <= 0) {
+        const removeIndex = cart.findIndex(
+          item => parseInt(item.productId) === parseInt(itemToUpdate.productId)
+        );
+
+        if (removeIndex === -1) {
+          throw new Error("Missmatch on products ids in cart.");
+        }
+
+        cart.splice(removeIndex, 1);
+      }
+
+      const isItemsInCart = cart?.[0];
+      if (!isItemsInCart) {
+        return res.status(200).json(cart);
+      }
 
       const productIdsArray = cart.map(item => item.productId);
 
@@ -342,14 +352,26 @@ export async function updateItem(req, res) {
 
     //User is logged in.
     try {
+      await db.run("BEGIN TRANSACTION");
+      //Update the cart
       await db.run(
         `
         UPDATE cart_items
-        SET quantity = ? + 1
+        SET quantity = quantity + ?
         WHERE user_id = ?
         AND product_id = ?`,
-        [quantity, userId, productId]
+        [changeAmount, userId, productId]
       );
+      //remove if quantity goes to 0 or is null
+      await db.run(
+        `DELETE FROM cart_items
+        WHERE user_id = ?
+        AND product_id = ?
+        AND (quantity <= 0 OR quantity IS NULL)`,
+        [userId, productId]
+      );
+
+      await db.run("COMMIT");
     } catch (err) {
       throw new Error("Failed to update cart-item in DB" + err.message);
     }

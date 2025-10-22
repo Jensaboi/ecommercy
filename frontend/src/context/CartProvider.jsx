@@ -72,13 +72,14 @@ export default function CartProvider({ children }) {
     },
     [setCart, setError, setLoading]
   );
-  const increaseCartItemQuantity = useCallback(
-    async ({ productId, quantity }) => {
+  const updateCartItem = useCallback(
+    async ({ productId, changeAmount }) => {
       setLoading(true);
+      console.log(changeAmount);
       try {
         const updatedCart = await updateCartItemQuantity({
           productId,
-          quantity,
+          changeAmount,
         });
 
         setCart(updatedCart);
@@ -100,7 +101,7 @@ export default function CartProvider({ children }) {
         deleteItemFromCart,
         addItemToCart,
         reFetchCart: fetchData,
-        increaseCartItemQuantity,
+        updateCartItem,
       }}
     >
       {children}
