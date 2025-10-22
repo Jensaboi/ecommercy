@@ -10,7 +10,7 @@ export default function DesktopProductsNav({
 
   return (
     <nav
-      className={`relative z-2 items-center overflow-x-scroll scrollbar-hidden justify-between hidden lg:flex ${className}`}
+      className={`relative z-2 items-center justify-between hidden lg:flex ${className}`}
       {...rest}
     >
       <ul className="flex items-center gap-4 no-scrollbar">
@@ -48,7 +48,7 @@ export default function DesktopProductsNav({
       {category && (
         <ul
           onMouseLeave={() => setCategory(null)}
-          className="flex fixed z-5 left-0 top-[106px] shadow-lg bg-bg-100 items-center w-full mx-auto"
+          className="flex absolute z-90 -left-5 right-0 pl-5 -bottom-18  shadow-lg bg-bg-100 items-center w-screen"
         >
           {categories[category].map((subCategory, i) => (
             <Link
