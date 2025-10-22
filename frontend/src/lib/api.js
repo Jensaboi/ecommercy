@@ -192,6 +192,22 @@ export async function updateCartItemQuantity({ productId, changeAmount }) {
   return data;
 }
 
+export async function deleteCart() {
+  const res = await fetch("/api/cart", {
+    method: "DELETE",
+    credentials: "include",
+  });
+
+  console.log("getting called");
+  const data = await res.json();
+
+  if (!res.ok) {
+    throw new Error(data?.message ?? "Something went wrong deleting cart.");
+  }
+
+  return data;
+}
+
 export async function logout() {
   const res = await fetch("/api/auth/logout", {
     method: "POST",
@@ -203,6 +219,20 @@ export async function logout() {
 
   if (!res.ok) {
     throw new Error(data?.message ?? "Something went wrong, please try again.");
+  }
+
+  return data;
+}
+
+export async function fetchCheckoutSession(searchQuery) {
+  const res = await fetch(`/api/checkout/checkout-session${searchQuery}`);
+
+  const data = await res.json();
+
+  if (!res.ok) {
+    throw new Error(
+      data?.message ?? "Something went wrong with getting the payment session"
+    );
   }
 
   return data;

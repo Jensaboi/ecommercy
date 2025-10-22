@@ -1,6 +1,11 @@
 import { Router } from "express";
-import { handlePayment } from "../controllers/checkoutControllers.js";
+import {
+  createCheckoutSession,
+  getSessionStatus,
+} from "../controllers/checkoutControllers.js";
 
 export const checkoutRouter = Router();
 
-checkoutRouter.post("/payment", handlePayment);
+checkoutRouter.post("/create-checkout-session", createCheckoutSession);
+
+checkoutRouter.get("/checkout-session", getSessionStatus);

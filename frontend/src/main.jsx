@@ -20,6 +20,10 @@ import Dashboard, { loader as dashBoardLoader } from "./pages/Dashboard.jsx";
 import Wishlist, { loader as wishlistLoader } from "./pages/Wishlist.jsx";
 import Auth from "./pages/Auth.jsx";
 import Orders, { loader as ordersLoader } from "./pages/Orders.jsx";
+import Cart, {
+  loader as cartLoader,
+  action as cartAction,
+} from "./pages/Cart.jsx";
 
 const router = createBrowserRouter([
   {
@@ -54,6 +58,12 @@ const router = createBrowserRouter([
             path: "/products/:id",
             element: <ProductDetails />,
             loader: productDetailsLoader,
+          },
+          {
+            path: "/cart",
+            element: <Cart />,
+            loader: cartLoader,
+            action: cartAction,
           },
           {
             element: <Auth />,

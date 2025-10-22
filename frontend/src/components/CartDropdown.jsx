@@ -21,7 +21,7 @@ export default function CartDropdown() {
               </span>
             )}
             <Link
-              to={"/checkout"}
+              to={"/cart"}
               onMouseEnter={open}
               className="icon"
               onClick={close}
@@ -56,12 +56,8 @@ export default function CartDropdown() {
                       <span>Total price: </span>
                       <span>{total?.toFixed(2)}</span>
                     </div>
-                    <Link
-                      onClick={close}
-                      to={"/checkout"}
-                      className="primary-btn"
-                    >
-                      Go to checkout
+                    <Link onClick={close} to={"/cart"} className="primary-btn">
+                      Go to cart
                     </Link>
                   </div>
                 </>

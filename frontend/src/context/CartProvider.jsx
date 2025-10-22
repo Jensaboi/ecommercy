@@ -7,6 +7,7 @@ import {
 } from "react";
 import {
   addToCart,
+  deleteCart,
   deleteCartItem,
   fetchCart,
   updateCartItemQuantity,
@@ -36,10 +37,6 @@ export default function CartProvider({ children }) {
     },
     [setCart, setError, setLoading]
   );
-
-  useEffect(() => {
-    fetchData();
-  }, []);
 
   const deleteItemFromCart = useCallback(
     async productId => {
@@ -72,6 +69,7 @@ export default function CartProvider({ children }) {
     },
     [setCart, setError, setLoading]
   );
+
   const updateCartItem = useCallback(
     async ({ productId, changeAmount }) => {
       setLoading(true);
@@ -92,6 +90,23 @@ export default function CartProvider({ children }) {
     [setCart, setError, setLoading]
   );
 
+  const deleteAllCartItems = useCallback(async () => {
+    setLoading(true);
+    try {
+      const updatedCart = await deleteCart();
+
+      setCart(updatedCart);
+    } catch (err) {
+      setError(err);
+    } finally {
+      setLoading(false);
+    }
+  }, [setCart, setError, setLoading]);
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
   return (
     <CartContext.Provider
       value={{
@@ -102,6 +117,7 @@ export default function CartProvider({ children }) {
         addItemToCart,
         reFetchCart: fetchData,
         updateCartItem,
+        deleteAllCartItems,
       }}
     >
       {children}
