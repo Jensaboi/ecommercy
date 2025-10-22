@@ -9,7 +9,7 @@ import Products, { loader as productsLoader } from "./pages/Products.jsx";
 import ProductDetails, {
   loader as productDetailsLoader,
 } from "./pages/ProductDetails.jsx";
-import Checkout, { loader as checkOutLoader } from "./pages/Checkout.jsx";
+import Checkout, { loader as checkoutLoader } from "./pages/Checkout.jsx";
 import Login, {
   loader as loginLoader,
   action as loginAction,
@@ -49,7 +49,7 @@ const router = createBrowserRouter([
             loader: loginLoader,
           },
           { path: "/Register", element: <Register />, action: registerAction },
-          { path: "/Checkout", element: <Checkout />, loader: checkOutLoader },
+          { path: "/checkout", element: <Checkout />, loader: checkoutLoader },
           {
             path: "/products/:id",
             element: <ProductDetails />,
