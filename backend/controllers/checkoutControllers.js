@@ -1,56 +1,31 @@
 import Stripe from "stripe";
+import { calculateOrderAmount } from "../lib/utility";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
 const YOUR_DOMAIN = "http://localhost:5173";
 
-export async function createCheckoutSession(req, res) {
-  console.log(req.body);
-  const cart = req.body;
-
-  let line_items = cart.map(item => ({
-    price_data: {
-      currency: "usd",
-      product_data: { name: item.name },
-      unit_amount: Math.round(item.price * 100),
-    },
-    quantity: item.quantity,
-  }));
-
+export async function createPaymentIntent(req, res) {
   try {
-    const session = await stripe.checkout.sessions.create({
-      payment_method_types: ["card"],
-      line_items,
-      mode: "payment",
-      success_url: `${YOUR_DOMAIN}/checkout?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${YOUR_DOMAIN}/checkout`,
+    const { cart } = req.body;
+    const total = calculateOrderAmount(cart);
+
+    const paymentIntent = await stripe.paymentIntents.create({
+      amount: calculateOrderAmount(items),
+      currency: "sek",
+      // In the latest version of the API, specifying the `automatic_payment_methods` parameter is optional because Stripe enables its functionality by default.
+      automatic_payment_methods: {
+        enabled: true,
+      },
     });
 
-    res.status(200).json({ url: session.url });
-  } catch (err) {
-    console.error(err);
-
-    res.status(500).json({ message: "Failed to create checkout session" });
-  }
-}
-
-export async function getSessionStatus(req, res) {
-  const sessionId = req.query?.session_id || req.query?.sessionId;
-
-  if (!sessionId) {
-    return res.status(400).json({ message: "Missing session ID" });
-  }
-
-  try {
-    // Retrieve session from Stripe
-    const session = await stripe.checkout.sessions.retrieve(sessionId, {
-      expand: ["line_items"], // optional: fetch all items in session
+    res.status(200).json({
+      clientSecret: paymentIntent.client_secret,
     });
-
-    res.status(200).json(session);
   } catch (err) {
     console.error(err);
-
-    res.status(500).json({ message: "Failed to fetch session" });
+    return res
+      .status(500)
+      .json({ message: "Something went wrong please try again." });
   }
 }

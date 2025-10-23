@@ -11,3 +11,7 @@ export function generateSqlQueryForCart(idsArr) {
 
   return str;
 }
+
+export function calculateOrderAmount(orderItemsArr) {
+  return orderItemsArr.reduce((acc, currItem) => acc + currItem.price, 0);
+}
