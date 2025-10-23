@@ -24,7 +24,7 @@ export default function Checkout() {
       deleteAllCartItems();
     }
   }, [session]);
-
+  console.log(session);
   return (
     <section>
       <p>Successfull</p>
