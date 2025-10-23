@@ -54,7 +54,7 @@ export default function Cart() {
               />
             ))}
           </ul>
-          <Form
+          <div
             action="/cart"
             method="POST"
             className="bg-shadow px-4 py-10 flex flex-col gap-6"
@@ -64,10 +64,10 @@ export default function Cart() {
               <p className="font-medium">{total.toFixed(2)}</p>
             </div>
             <input type="hidden" name="cart" value={JSON.stringify(cart)} />
-            <Button type="submit" variant="primary">
-              Go to payment
-            </Button>
-          </Form>
+            <Link to={"/checkout"} className="primary-btn">
+              Checkout
+            </Link>
+          </div>
         </div>
       ) : (
         <div className="flex flex-col gap-6 px-4 py-10 text-center">

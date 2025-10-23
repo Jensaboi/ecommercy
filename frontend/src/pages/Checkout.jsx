@@ -1,33 +1,37 @@
-import { useEffect } from "react";
-import { useLoaderData } from "react-router-dom";
-import { fetchCheckoutSession } from "../lib/api";
-import { useCart } from "../context/CartProvider.jsx";
-
-export async function loader({ request, params }) {
-  const url = new URL(request.url);
-
-  try {
-    const session = await fetchCheckoutSession(url.search);
-
-    return { session };
-  } catch (err) {
-    return { error: err.message };
-  }
-}
+import React, { useState } from "react";
+import { PaymentElement, useCheckout } from "@stripe/react-stripe-js/checkout";
 
 export default function Checkout() {
-  const { session } = useLoaderData();
-  const { deleteAllCartItems } = useCart();
+  const checkout = useCheckout(); // Get the Checkout object
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
-  useEffect(() => {
-    if (session?.payment_status === "paid") {
-      deleteAllCartItems();
+  const handleSubmit = async e => {
+    e.preventDefault();
+    setErrorMessage("");
+
+    if (!checkout.canConfirm) {
+      setErrorMessage("Payment is not ready to be confirmed.");
+      return;
     }
-  }, [session]);
-  console.log(session);
+
+    setIsSubmitting(true);
+
+    const { error } = await checkout.confirm();
+    if (error) {
+      setErrorMessage(error.message);
+      setIsSubmitting(false);
+    }
+  };
+
   return (
-    <section>
-      <p>Successfull</p>
-    </section>
+    <form onSubmit={handleSubmit}>
+      <h4>Payment</h4>
+      <PaymentElement id="payment-element" />
+      {errorMessage && <div style={{ color: "red" }}>{errorMessage}</div>}
+      <button type="submit" disabled={isSubmitting || !checkout.canConfirm}>
+        {isSubmitting ? "Processing..." : "Pay"}
+      </button>
+    </form>
   );
 }

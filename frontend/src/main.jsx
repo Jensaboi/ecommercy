@@ -9,7 +9,6 @@ import Products, { loader as productsLoader } from "./pages/Products.jsx";
 import ProductDetails, {
   loader as productDetailsLoader,
 } from "./pages/ProductDetails.jsx";
-import Checkout, { loader as checkoutLoader } from "./pages/Checkout.jsx";
 import Login, {
   loader as loginLoader,
   action as loginAction,
@@ -24,6 +23,9 @@ import Cart, {
   loader as cartLoader,
   action as cartAction,
 } from "./pages/Cart.jsx";
+import Checkout from "./pages/Checkout.jsx";
+import Complete from "./pages/Complete.jsx";
+import StripeProvider from "./context/StripeProvider.jsx";
 
 const router = createBrowserRouter([
   {
@@ -53,7 +55,13 @@ const router = createBrowserRouter([
             loader: loginLoader,
           },
           { path: "/Register", element: <Register />, action: registerAction },
-          { path: "/checkout", element: <Checkout />, loader: checkoutLoader },
+          {
+            element: <StripeProvider />,
+            children: [
+              { path: "/checkout", element: <Checkout /> },
+              { path: "/complete", element: <Complete /> },
+            ],
+          },
           {
             path: "/products/:id",
             element: <ProductDetails />,
