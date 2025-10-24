@@ -11,8 +11,7 @@ import { orderRouter } from "./routes/orderRouter.js";
 import { checkoutRouter } from "./routes/checkoutRouter.js";
 import { sIdMiddleware } from "./middleware/sIdMiddleware.js";
 
-const PORT = process.env.PORT;
-const __dirname = import.meta.dirname;
+const PORT = process.env.PORT || 8000;
 const app = express();
 
 app.use(
