@@ -81,6 +81,13 @@
     }
     scrollbar-width: none; /* Firefox */
   }
+
+  .scrollbar-active {
+    &::-webkit-scrollbar {
+      display: inline-block;
+    }
+    scrollbar-width: 2px; /* Firefox */
+  }
 }
 
 @layer components {
@@ -110,6 +117,6 @@
     @apply w-full p-2 bg-white rounded-sm text-zinc-800 placeholder:text-placeholder;
   }
   .error-text {
-    @apply text-red-300;
+    @apply text-red-600;
   }
 }

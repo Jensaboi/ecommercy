@@ -19,7 +19,26 @@ export default function StripeProvider() {
   const { clientSecret } = useLoaderData();
 
   const appearance = {
-    theme: "stripe",
+    theme: "stripe", // "stripe", "flat", "night" etc.
+    variables: {
+      colorPrimary: "#4f46e5",
+      borderRadius: "8px",
+      colorBackground: "#ffffff",
+      colorText: "#1f2937",
+      spacingUnit: "4px",
+    },
+    rules: {
+      ".Input": {
+        borderColor: "#d1d5db", // ✅ sets input border color
+        borderWidth: "2px",
+      },
+      ".Input:focus": {
+        borderColor: "#4f46e5", // border color when focused
+      },
+      ".Label": {
+        color: "#374151",
+      },
+    },
   };
 
   return (

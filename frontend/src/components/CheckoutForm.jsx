@@ -44,7 +44,9 @@ const EmailInput = ({ email, setEmail, error, setError }) => {
           value={email}
           onChange={handleChange}
           onBlur={handleBlur}
-          className={error ? "error" : "w-full border"}
+          className={
+            error ? "error" : "w-full border border-shadow rounded-sm p-2"
+          }
         />
       </label>
       {error && <div id="email-errors">{error}</div>}
@@ -61,6 +63,10 @@ export default function CheckoutForm() {
   const checkoutState = useCheckout();
   if (checkoutState.type === "error") {
     return <div>Error: {checkoutState.error.message}</div>;
+  }
+
+  if (checkoutState.type === "loading") {
+    return <div>Loading checkout...</div>;
   }
 
   const handleSubmit = async e => {
@@ -92,15 +98,22 @@ export default function CheckoutForm() {
   };
 
   return (
-    <form className="border " onSubmit={handleSubmit}>
+    <form className="w-full p-4 flex flex-col gap-6" onSubmit={handleSubmit}>
+      <h2 className="text-lg font-semibold">Payment</h2>
       <EmailInput
         email={email}
         setEmail={setEmail}
         error={emailError}
         setError={setEmailError}
       />
-      <h4>Payment</h4>
+
       <PaymentElement id="payment-element" />
+      {/* Show any error or success messages */}
+      {message && (
+        <div className="error-text text-center" id="payment-message">
+          {message}
+        </div>
+      )}
       <Button variant={"primary"} disabled={isLoading} id="submit">
         {isLoading || checkoutState.type === "loading" ? (
           <div className="spinner"></div>
@@ -108,8 +121,6 @@ export default function CheckoutForm() {
           `Pay ${checkoutState.checkout.total.total.amount} now`
         )}
       </Button>
-      {/* Show any error or success messages */}
-      {message && <div id="payment-message">{message}</div>}
     </form>
   );
 }

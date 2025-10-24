@@ -22,7 +22,7 @@ export default function Checkout() {
   }, [totalCartQuantity, lineItemsTotalQuantity, checkoutState.type]);
 
   return (
-    <section className="container mx-auto flex flex-col gap-6 md:flex-row border border-red-500">
+    <section className="container mx-auto max-w-[768px] lg:mt-20 flex flex-col gap-6 sm:flex-row justify-center ">
       <OrderSummary />
       <CheckoutForm />
     </section>
