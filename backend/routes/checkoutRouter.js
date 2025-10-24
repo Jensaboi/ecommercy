@@ -8,4 +8,4 @@ export const checkoutRouter = Router();
 
 checkoutRouter.post("/create-checkout-session", createCheckoutSession);
 
-checkoutRouter.get("/checkout-session", getSessionStatus);
+checkoutRouter.get("/session-status", getSessionStatus);

@@ -1,37 +1,116 @@
 import React, { useState } from "react";
 import { PaymentElement, useCheckout } from "@stripe/react-stripe-js/checkout";
 
-export default function Checkout() {
-  const checkout = useCheckout(); // Get the Checkout object
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
+const validateEmail = async (email, checkout) => {
+  const updateResult = await checkout.updateEmail(email);
+  const isValid = updateResult.type !== "error";
 
-  const handleSubmit = async e => {
-    e.preventDefault();
-    setErrorMessage("");
+  return { isValid, message: !isValid ? updateResult.error.message : null };
+};
 
-    if (!checkout.canConfirm) {
-      setErrorMessage("Payment is not ready to be confirmed.");
+const EmailInput = ({ email, setEmail, error, setError }) => {
+  const checkoutState = useCheckout();
+  if (checkoutState.type === "loading") {
+    return <div>Loading...</div>;
+  } else if (checkoutState.type === "error") {
+    return <div>Error: {checkoutState.error.message}</div>;
+  }
+  const { checkout } = checkoutState;
+
+  const handleBlur = async () => {
+    if (!email) {
       return;
     }
 
-    setIsSubmitting(true);
-
-    const { error } = await checkout.confirm();
-    if (error) {
-      setErrorMessage(error.message);
-      setIsSubmitting(false);
+    const { isValid, message } = await validateEmail(email, checkout);
+    if (!isValid) {
+      setError(message);
     }
+  };
+
+  const handleChange = e => {
+    setError(null);
+    setEmail(e.target.value);
+  };
+
+  return (
+    <>
+      <label>
+        Email
+        <input
+          id="email"
+          type="text"
+          value={email}
+          onChange={handleChange}
+          onBlur={handleBlur}
+          className={error ? "error" : ""}
+        />
+      </label>
+      {error && <div id="email-errors">{error}</div>}
+    </>
+  );
+};
+
+const Checkout = () => {
+  const [email, setEmail] = useState("");
+  const [emailError, setEmailError] = useState(null);
+  const [message, setMessage] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const checkoutState = useCheckout();
+  if (checkoutState.type === "error") {
+    return <div>Error: {checkoutState.error.message}</div>;
+  }
+
+  const handleSubmit = async e => {
+    e.preventDefault();
+
+    const { checkout } = checkoutState;
+    setIsLoading(true);
+
+    const { isValid, message } = await validateEmail(email, checkout);
+    if (!isValid) {
+      setEmailError(message);
+      setMessage(message);
+      setIsLoading(false);
+      return;
+    }
+
+    const confirmResult = await checkout.confirm();
+
+    // This point will only be reached if there is an immediate error when
+    // confirming the payment. Otherwise, your customer will be redirected to
+    // your `return_url`. For some payment methods like iDEAL, your customer will
+    // be redirected to an intermediate site first to authorize the payment, then
+    // redirected to the `return_url`.
+    if (confirmResult.type === "error") {
+      setMessage(confirmResult.error.message);
+    }
+
+    setIsLoading(false);
   };
 
   return (
     <form onSubmit={handleSubmit}>
+      <EmailInput
+        email={email}
+        setEmail={setEmail}
+        error={emailError}
+        setError={setEmailError}
+      />
       <h4>Payment</h4>
       <PaymentElement id="payment-element" />
-      {errorMessage && <div style={{ color: "red" }}>{errorMessage}</div>}
-      <button type="submit" disabled={isSubmitting || !checkout.canConfirm}>
-        {isSubmitting ? "Processing..." : "Pay"}
+      <button disabled={isLoading} id="submit">
+        {isLoading || checkoutState.type === "loading" ? (
+          <div className="spinner"></div>
+        ) : (
+          `Pay ${checkoutState.checkout.total.total.amount} now`
+        )}
       </button>
+      {/* Show any error or success messages */}
+      {message && <div id="payment-message">{message}</div>}
     </form>
   );
-}
+};
+
+export default Checkout;

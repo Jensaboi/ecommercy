@@ -1,5 +1,10 @@
 import React, { useState, useEffect } from "react";
 
+export async function loader() {
+  try {
+  } catch (err) {}
+}
+
 export default function Complete() {
   const [statusData, setStatusData] = useState({
     status: null,
@@ -50,7 +55,7 @@ export default function Complete() {
     const urlParams = new URLSearchParams(queryString);
     const sessionId = urlParams.get("session_id");
 
-    fetch(`/session-status?session_id=${sessionId}`)
+    fetch(`/api/checkout/session-status?session_id=${sessionId}`)
       .then(res => res.json())
       .then(data => {
         const isSuccess = data.status === "complete";
@@ -86,7 +91,7 @@ export default function Complete() {
     icon,
     text,
   } = statusData;
-
+  console.log(statusData);
   return (
     <div
       style={{

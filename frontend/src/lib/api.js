@@ -141,7 +141,9 @@ export async function fetchCart() {
   let data = await res.json();
 
   if (!res.ok) {
-    throw new Error(`${data.message || "Something went wrong."}`);
+    throw new Error(
+      `${data.message || "Something went wrong fetching the cart, try again."}`
+    );
   }
 
   data = data.map(item => ({
@@ -218,7 +220,9 @@ export async function logout() {
   const data = await res.json();
 
   if (!res.ok) {
-    throw new Error(data?.message ?? "Something went wrong, please try again.");
+    throw new Error(
+      data?.message ?? "Something went wrong login out, please try again."
+    );
   }
 
   return data;
@@ -231,8 +235,30 @@ export async function fetchCheckoutSession(searchQuery) {
 
   if (!res.ok) {
     throw new Error(
-      data?.message ?? "Something went wrong with getting the payment session"
+      data?.message ?? "Something went wrong with getting the payment session."
     );
+  }
+
+  return data;
+}
+
+export async function createCheckoutSession(cart) {
+  const res = await fetch("/api/checkout/create-checkout-session", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(cart),
+  });
+
+  const data = await res.json();
+
+  if (!res.ok) {
+    throw new Error(
+      data?.message ?? "Something went wrong creating an checkout session."
+    );
+  }
+
+  if (!data?.clientSecret) {
+    throw new Error("No avaible Client Secret for this session.");
   }
 
   return data;

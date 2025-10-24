@@ -25,7 +25,9 @@ import Cart, {
 } from "./pages/Cart.jsx";
 import Checkout from "./pages/Checkout.jsx";
 import Complete from "./pages/Complete.jsx";
-import StripeProvider from "./context/StripeProvider.jsx";
+import StripeProvider, {
+  loader as stripeLoader,
+} from "./context/StripeProvider.jsx";
 
 const router = createBrowserRouter([
   {
@@ -57,8 +59,12 @@ const router = createBrowserRouter([
           { path: "/Register", element: <Register />, action: registerAction },
           {
             element: <StripeProvider />,
+            loader: stripeLoader,
             children: [
-              { path: "/checkout", element: <Checkout /> },
+              {
+                path: "/checkout",
+                element: <Checkout />,
+              },
               { path: "/complete", element: <Complete /> },
             ],
           },
