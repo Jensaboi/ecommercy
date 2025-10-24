@@ -19,6 +19,8 @@ export default function CartProvider({ children }) {
   const [cart, setCart] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const totalCartQuantity =
+    cart?.reduce((acc, currItem) => acc + currItem.quantity, 0) ?? 0;
 
   const fetchData = useCallback(
     async async => {
@@ -118,6 +120,7 @@ export default function CartProvider({ children }) {
         reFetchCart: fetchData,
         updateCartItem,
         deleteAllCartItems,
+        totalCartQuantity,
       }}
     >
       {children}

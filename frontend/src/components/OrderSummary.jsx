@@ -27,12 +27,12 @@ export default function OrderSummary() {
   const { currency, currencyOptions, lineItems, taxAmounts, total, recurring } =
     checkoutState.checkout;
   // ... your component here
-  console.log("currency", currency);
+  /*   console.log("currency", currency);
   console.log("currencyOptions", currencyOptions);
   console.log("lineItems", lineItems);
   console.log("taxAmounts", taxAmounts);
   console.log("total", total.total.amount);
-  console.log("recurring", recurring);
+  console.log("recurring", recurring); */
   return (
     <div className="p-4 border">
       <h2 className="text-lg font-semibold">Order summary</h2>
@@ -45,7 +45,7 @@ export default function OrderSummary() {
               <div className="size-20">
                 <img
                   className="w-full h-full object-cover object-center"
-                  src={IMG_BASE_URL + cartItem.images[0]}
+                  src={IMG_BASE_URL + cartItem?.images?.[0]}
                 />
               </div>
               <div>

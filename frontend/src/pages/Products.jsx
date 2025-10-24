@@ -1,5 +1,5 @@
 import { useLoaderData } from "react-router-dom";
-import { fetchAllProducts } from "../lib/api";
+import { fetchProducts } from "../lib/api";
 import ProductsFilter from "../components/ProductsFilter";
 import ProductCard from "../components/ProductCard";
 
@@ -17,13 +17,7 @@ export async function loader({ params, request }) {
       }
     }
 
-    let products = await fetchAllProducts(queryStr);
-
-    products = products.map(item => ({
-      ...item,
-      attributes: JSON.parse(item.attributes),
-      images: JSON.parse(item.images),
-    }));
+    const products = await fetchProducts(queryStr);
 
     return { products };
   } catch (err) {}
@@ -31,7 +25,6 @@ export async function loader({ params, request }) {
 
 export default function Products() {
   const { products } = useLoaderData();
-  //console.log(products);
 
   return (
     <div>

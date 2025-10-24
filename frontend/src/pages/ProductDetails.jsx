@@ -8,11 +8,6 @@ export async function loader({ params }) {
 
   try {
     let product = await fetchProduct(id);
-    product = {
-      ...product,
-      attributes: JSON.parse(product.attributes),
-      images: JSON.parse(product.images),
-    };
 
     return { product };
   } catch (err) {

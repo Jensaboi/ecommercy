@@ -44,7 +44,7 @@ const EmailInput = ({ email, setEmail, error, setError }) => {
           value={email}
           onChange={handleChange}
           onBlur={handleBlur}
-          className={error ? "error" : ""}
+          className={error ? "error" : "w-full border"}
         />
       </label>
       {error && <div id="email-errors">{error}</div>}

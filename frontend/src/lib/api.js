@@ -9,7 +9,7 @@ export async function login({ email, password }) {
   const data = await res.json();
 
   if (!res.ok) {
-    throw new Error(`${data.message || "Something went wrong."}`);
+    throw new Error(`${data?.message || "Something went wrong."}`);
   }
 
   return data;
@@ -25,7 +25,25 @@ export async function register({ name, gender, email, password }) {
   const data = await res.json();
 
   if (!res.ok) {
-    throw new Error(`${data.message || "Something went wrong."}`);
+    throw new Error(`${data?.message || "Something went wrong."}`);
+  }
+
+  return data;
+}
+
+export async function logout() {
+  const res = await fetch("/api/auth/logout", {
+    method: "POST",
+    credentials: "include",
+    headers: { "Content-Type": "application/json" },
+  });
+
+  const data = await res.json();
+
+  if (!res.ok) {
+    throw new Error(
+      data?.message ?? "Something went wrong login out, please try again."
+    );
   }
 
   return data;
@@ -40,7 +58,7 @@ export async function fetchUser() {
   const data = await res.json();
 
   if (!res.ok) {
-    throw new Error(`${data.message || "Something went wrong."}`);
+    throw new Error(`${data?.message || "Something went wrong."}`);
   }
 
   return data;
@@ -52,32 +70,26 @@ export async function fetchCategories() {
   const data = await res.json();
 
   if (!res.ok) {
-    throw new Error(`${data.message || "Something went wrong."}`);
+    throw new Error(`${data?.message || "Something went wrong."}`);
   }
 
   return data;
 }
 
-export async function fetchAllProducts(queryString) {
+export async function fetchProducts(queryString) {
   const res = await fetch(`/api/products${queryString}`);
 
-  const data = await res.json();
+  let data = await res.json();
 
   if (!res.ok) {
-    throw new Error(`${data.message || "Something went wrong."}`);
+    throw new Error(`${data?.message || "Something went wrong."}`);
   }
 
-  return data;
-}
-
-export async function fetchProductsWithCategory(queryString) {
-  const res = await fetch(`/api/products`);
-
-  const data = await res.json();
-
-  if (!res.ok) {
-    throw new Error(`${data.message || "Something went wrong."}`);
-  }
+  data = data.map(item => ({
+    ...item,
+    attributes: JSON.parse(item.attributes),
+    images: JSON.parse(item.images),
+  }));
 
   return data;
 }
@@ -85,11 +97,17 @@ export async function fetchProductsWithCategory(queryString) {
 export async function fetchProduct(id) {
   const res = await fetch(`/api/products/${id}`);
 
-  const data = await res.json();
+  let data = await res.json();
 
   if (!res.ok) {
-    throw new Error(`${data.message || "Something went wrong."}`);
+    throw new Error(`${data?.message || "Something went wrong."}`);
   }
+
+  data = {
+    ...data,
+    attributes: JSON.parse(data.attributes),
+    images: JSON.parse(data.images),
+  };
 
   return data;
 }
@@ -100,7 +118,7 @@ export async function fetchProductsWithSearch(queryString, signal) {
   const data = await res.json();
 
   if (!res.ok) {
-    throw new Error(`${data.message || "Something went wrong."}`);
+    throw new Error(`${data?.message || "Something went wrong."}`);
   }
 
   return data;
@@ -119,7 +137,7 @@ export async function addToCart(productId) {
   let data = await res.json();
 
   if (!res.ok) {
-    throw new Error(`${data.message || "Something went wrong."}`);
+    throw new Error(`${data?.message || "Something went wrong."}`);
   }
 
   data = data.map(item => ({
@@ -142,7 +160,7 @@ export async function fetchCart() {
 
   if (!res.ok) {
     throw new Error(
-      `${data.message || "Something went wrong fetching the cart, try again."}`
+      `${data?.message || "Something went wrong fetching the cart, try again."}`
     );
   }
 
@@ -162,11 +180,17 @@ export async function deleteCartItem(productId) {
     credentials: "include",
   });
 
-  const data = await res.json();
+  let data = await res.json();
 
   if (!res.ok) {
     throw new Error(data?.message ?? "Something went wrong, Please try again.");
   }
+
+  data = data.map(item => ({
+    ...item,
+    attributes: JSON.parse(item.attributes),
+    images: JSON.parse(item.images),
+  }));
 
   return data;
 }
@@ -200,29 +224,10 @@ export async function deleteCart() {
     credentials: "include",
   });
 
-  console.log("getting called");
   const data = await res.json();
 
   if (!res.ok) {
     throw new Error(data?.message ?? "Something went wrong deleting cart.");
-  }
-
-  return data;
-}
-
-export async function logout() {
-  const res = await fetch("/api/auth/logout", {
-    method: "POST",
-    credentials: "include",
-    headers: { "Content-Type": "application/json" },
-  });
-
-  const data = await res.json();
-
-  if (!res.ok) {
-    throw new Error(
-      data?.message ?? "Something went wrong login out, please try again."
-    );
   }
 
   return data;
