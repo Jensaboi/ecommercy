@@ -1,11 +1,22 @@
 import React, { useState, useEffect } from "react";
+import { fetchSessionStatus } from "../lib/api";
+import { useLoaderData } from "react-router-dom";
 
-export async function loader() {
+export async function loader({ request }) {
+  const url = new URL(request.url);
+
+  const searchParmas = url.searchParams;
+  const sessionId = searchParmas.get("session_id");
+
   try {
+    const data = await fetchSessionStatus(sessionId);
+
+    return data;
   } catch (err) {}
 }
 
 export default function Complete() {
+  const data = useLoaderData();
   const [statusData, setStatusData] = useState({
     status: null,
     paymentIntentId: "",
@@ -15,6 +26,8 @@ export default function Complete() {
     icon: null,
     text: "",
   });
+  console.log("data", data);
+  //console.log("statusData", statusData);
 
   useEffect(() => {
     const SuccessIcon = (
@@ -91,9 +104,10 @@ export default function Complete() {
     icon,
     text,
   } = statusData;
-  console.log(statusData);
+
   return (
     <div
+      className="border"
       style={{
         display: "flex",
         flexDirection: "column",

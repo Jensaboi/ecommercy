@@ -228,8 +228,10 @@ export async function logout() {
   return data;
 }
 
-export async function fetchCheckoutSession(searchQuery) {
-  const res = await fetch(`/api/checkout/checkout-session${searchQuery}`);
+export async function fetchSessionStatus(sessionId) {
+  const res = await fetch(
+    `/api/checkout/session-status?session_id=${sessionId}`
+  );
 
   const data = await res.json();
 

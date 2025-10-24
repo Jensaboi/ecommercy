@@ -54,11 +54,7 @@ export default function Cart() {
               />
             ))}
           </ul>
-          <div
-            action="/cart"
-            method="POST"
-            className="bg-shadow px-4 py-10 flex flex-col gap-6"
-          >
+          <div className="bg-shadow px-4 py-10 flex flex-col gap-6">
             <div className="flex items-center justify-between">
               <h3 className="text-xl font-medium">Total</h3>
               <p className="font-medium">{total.toFixed(2)}</p>

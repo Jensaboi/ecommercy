@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-
+import { IMG_BASE_URL } from "../lib/constants";
 export default function ProductCard({
   id,
   name,
@@ -16,7 +16,7 @@ export default function ProductCard({
         <div className="size-50">
           <img
             className="object-cover object-center w-full h-full"
-            src={`http://localhost:8000/public` + images[0]}
+            src={IMG_BASE_URL + images[0]}
             alt=""
           />
         </div>

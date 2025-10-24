@@ -9,6 +9,7 @@ import { meRouter } from "./routes/meRouter.js";
 import { authRequired } from "./middleware/authRequired.js";
 import { orderRouter } from "./routes/orderRouter.js";
 import { checkoutRouter } from "./routes/checkoutRouter.js";
+import { sIdMiddleware } from "./middleware/sIdMiddleware.js";
 
 const PORT = process.env.PORT;
 const __dirname = import.meta.dirname;
@@ -36,6 +37,8 @@ app.use(
     },
   })
 );
+
+app.use(sIdMiddleware);
 
 app.use("/public", express.static("public"));
 

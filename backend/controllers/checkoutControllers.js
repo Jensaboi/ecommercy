@@ -1,11 +1,15 @@
 import Stripe from "stripe";
+import { randomUUID } from "crypto";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
-const YOUR_DOMAIN = process.env.DOMAIN_URL || "http://localhost:5173";
+const DOMAIN_URL = process.env.DOMAIN_URL || "http://localhost:5173";
 
 export async function createCheckoutSession(req, res) {
   const cart = req.body;
 
+  const { userId, sId } = req.session;
+
+  const checkoutId = randomUUID();
   try {
     const items = cart.map(item => ({
       price_data: {
@@ -20,8 +24,12 @@ export async function createCheckoutSession(req, res) {
       ui_mode: "custom",
       line_items: items,
       mode: "payment",
-      return_url: `${YOUR_DOMAIN}/complete?session_id={CHECKOUT_SESSION_ID}`,
-      metadata: { cart: JSON.stringify(cart) },
+      return_url: `${DOMAIN_URL}/checkout/complete?session_id={CHECKOUT_SESSION_ID}`,
+      metadata: {
+        checkoutId,
+        userId,
+        sId,
+      },
     });
 
     res.status(200).json({ clientSecret: session.client_secret });
