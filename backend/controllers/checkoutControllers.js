@@ -7,7 +7,8 @@ const DOMAIN_URL = process.env.DOMAIN_URL || "http://localhost:5173";
 export async function createCheckoutSession(req, res) {
   const cart = req.body;
 
-  const { userId, sId } = req.session;
+  const { userId } = req.session;
+  const sid = req.session.id;
 
   const checkoutId = randomUUID();
   try {
@@ -27,8 +28,8 @@ export async function createCheckoutSession(req, res) {
       return_url: `${DOMAIN_URL}/checkout/complete?session_id={CHECKOUT_SESSION_ID}`,
       metadata: {
         checkoutId,
-        userId,
-        sId,
+        userId: userId ?? null,
+        sid,
       },
     });
 

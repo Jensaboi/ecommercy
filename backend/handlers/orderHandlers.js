@@ -1,4 +1,4 @@
-export function handleCreateOrder(paymentIntent) {
+export function handleCreateOrder(...args) {
   console.log("Creating order...");
-  console.log(paymentIntent);
+  console.log(args);
 }

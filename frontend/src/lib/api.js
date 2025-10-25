@@ -253,6 +253,7 @@ export async function createCheckoutSession(cart) {
   const res = await fetch("/api/checkout/create-checkout-session", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
+    credentials: "include",
     body: JSON.stringify(cart),
   });
 

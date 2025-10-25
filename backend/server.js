@@ -2,13 +2,14 @@ import "./config.js";
 import express from "express";
 import session from "express-session";
 import cors from "cors";
+import { randomUUID } from "crypto";
+import "./listeners/orderListener.js";
 import { productsRouter } from "./routes/productsRouter.js";
 import { authRouter } from "./routes/authRouter.js";
 import { cartRouter } from "./routes/cartRouter.js";
 import { meRouter } from "./routes/meRouter.js";
 import { authRequired } from "./middleware/authRequired.js";
 import { checkoutRouter } from "./routes/checkoutRouter.js";
-import { sIdMiddleware } from "./middleware/sIdMiddleware.js";
 import { stripeRouter } from "./routes/stripeRouter.js";
 
 const PORT = process.env.PORT || 8000;
@@ -23,6 +24,7 @@ app.use(
 
 app.use(
   session({
+    genid: randomUUID,
     secret: "supersecretkey", // must be secret, used to sign cookie
     resave: false, // don't save if session hasn't changed
     saveUninitialized: false, // don't create session until something stored
@@ -38,8 +40,6 @@ app.use(
 app.use("/api/stripe", stripeRouter);
 
 app.use(express.json());
-
-app.use(sIdMiddleware);
 
 app.use("/public", express.static("public"));
 
