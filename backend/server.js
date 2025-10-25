@@ -7,7 +7,6 @@ import { authRouter } from "./routes/authRouter.js";
 import { cartRouter } from "./routes/cartRouter.js";
 import { meRouter } from "./routes/meRouter.js";
 import { authRequired } from "./middleware/authRequired.js";
-import { orderRouter } from "./routes/orderRouter.js";
 import { checkoutRouter } from "./routes/checkoutRouter.js";
 import { sIdMiddleware } from "./middleware/sIdMiddleware.js";
 import { stripeRouter } from "./routes/stripeRouter.js";
@@ -47,8 +46,6 @@ app.use("/public", express.static("public"));
 app.use("/api/products", productsRouter);
 
 app.use("/api/cart", cartRouter);
-
-app.use("/api/orders", orderRouter);
 
 app.use("/api/auth/me", authRequired, meRouter);
 
