@@ -10,6 +10,7 @@ import { authRequired } from "./middleware/authRequired.js";
 import { orderRouter } from "./routes/orderRouter.js";
 import { checkoutRouter } from "./routes/checkoutRouter.js";
 import { sIdMiddleware } from "./middleware/sIdMiddleware.js";
+import { stripeRouter } from "./routes/stripeRouter.js";
 
 const PORT = process.env.PORT || 8000;
 const app = express();
@@ -20,8 +21,6 @@ app.use(
     credentials: true, // allow cookies and credentials
   })
 );
-
-app.use(express.json());
 
 app.use(
   session({
@@ -37,15 +36,19 @@ app.use(
   })
 );
 
+app.use("/api/stripe", stripeRouter);
+
+app.use(express.json());
+
 app.use(sIdMiddleware);
 
 app.use("/public", express.static("public"));
 
-app.use("/api/orders", orderRouter);
-
 app.use("/api/products", productsRouter);
 
 app.use("/api/cart", cartRouter);
+
+app.use("/api/orders", orderRouter);
 
 app.use("/api/auth/me", authRequired, meRouter);
 
